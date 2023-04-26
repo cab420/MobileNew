@@ -3,6 +3,7 @@ import AuthScreen from "../screens/AuthScreen";
 import HomeScreen from "../screens/HomeScreen";
 import SplashScreen from "../screens/SplashScreen";
 import RecordHistoryScreen from "../screens/RecordHistory";
+import StreamScreen from "../screens/StreamScreen";
 
 import React, {useContext} from "react";
 import { AuthContextProvider, AuthContext } from "../context/AuthContext";
@@ -32,6 +33,7 @@ const Navigation = () => {
       <>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="RecordHistory" component={RecordHistoryScreen} />
+        <Stack.Screen name="StreamScreen" component={StreamScreen} />
       </>
       ) : (
       <>
