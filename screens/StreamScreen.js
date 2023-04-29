@@ -3,6 +3,7 @@ import React, {useState, useRef} from 'react'
 import { Button, Input, Image } from "react-native-elements";     
 import {ImageBackground} from 'react-native'; // for background image
 import TextInputContainer from '../components/TextInputContainer';
+import ScreenShare from '../components/ScreenShare';
 
 
 const StreamScreen = ({ navigation }) => {

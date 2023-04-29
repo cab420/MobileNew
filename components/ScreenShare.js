@@ -12,7 +12,13 @@ import {
   RTCSessionDescription,
 } from 'react-native-webrtc';
 
+//get context so we can access the user information to send screen share to the correct room/team
+import React, {useContext} from "react";
+import { AuthContextProvider, AuthContext } from "../context/AuthContext";
+
 export default function ScreenShare({}) {
+  // grab user info from context
+  const { userInfo, splashLoading } = useContext(AuthContext);
 
 // Stream of local user
 const [localStream, setlocalStream] = useState(null);
@@ -179,11 +185,13 @@ const socket = SocketIOClient(SOCKET_URL, {
     socket.emit('ICEcandidate', data);
   }
 
+  //need to update callee id to use the team name instead, this should ensure connection
+  //to the team room created via the desktop client
   async function processCall() {
     const sessionDescription = await peerConnection.current.createOffer();
     await peerConnection.current.setLocalDescription(sessionDescription);
     sendCall({
-      calleeId: otherUserId.current,
+      calleeId: userInfo.team,
       rtcMessage: sessionDescription,
     });
   }
@@ -208,4 +216,5 @@ const socket = SocketIOClient(SOCKET_URL, {
     socket.emit('call', data);
   }
   
+  return(processCall);
 }
