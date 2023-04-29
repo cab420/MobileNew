@@ -201,6 +201,7 @@ const socket = SocketIOClient(SOCKET_URL, {
   async function processCall() {
     const sessionDescription = await peerConnection.current.createOffer();
     await peerConnection.current.setLocalDescription(sessionDescription);
+    console.log("reaches process call")
     sendCall({
       calleeId: userInfo.team,
       rtcMessage: sessionDescription,
