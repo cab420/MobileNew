@@ -19,7 +19,7 @@ import {
 } from 'react-native-webrtc';
 
 //get context so we can access the user information to send screen share to the correct room/team
-import React, {useContext} from "react";
+import {useContext} from "react";
 import { AuthContextProvider, AuthContext } from "../context/AuthContext";
 
 export default function ScreenShare({}) {
