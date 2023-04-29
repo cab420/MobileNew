@@ -4,10 +4,11 @@
 import SocketIOClient from 'socket.io-client'; // import socket io
 import { SOCKET_URL } from '../config/config';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput } from 'react-native'
-import React, {useState, useRef} from 'react'
 import { Button, Input, Image } from "react-native-elements";     
 import {ImageBackground} from 'react-native'; // for background image
 import TextInputContainer from '../components/TextInputContainer';
+import InCallManager from 'react-native-incall-manager'; //may not need this
+
 
 // import WebRTC 
 import {
@@ -19,10 +20,11 @@ import {
 } from 'react-native-webrtc';
 
 //get context so we can access the user information to send screen share to the correct room/team
-import {useContext} from "react";
+import React, {useState, useRef, useContext, useEffect} from 'react'
+
 import { AuthContextProvider, AuthContext } from "../context/AuthContext";
 
-export default function ScreenShare({}) {
+export default function ScreenShare({ navigation }) {
   // grab user info from context
   const { userInfo, splashLoading } = useContext(AuthContext);
 
@@ -75,9 +77,9 @@ const socket = SocketIOClient(SOCKET_URL, {
     useEffect(() => {
     socket.on('newCall', data => {
      /* This event occurs whenever any peer wishes to establish a call with you. */
-     remoteRTCMessage.current = data.rtcMessage;
-     otherUserId.current = data.callerId;
-     setType('INCOMING_CALL');
+    remoteRTCMessage.current = data.rtcMessage;
+    otherUserId.current = data.callerId;
+    setType('INCOMING_CALL');
     });
 
     socket.on('callAnswered', data => {
@@ -86,7 +88,7 @@ const socket = SocketIOClient(SOCKET_URL, {
       peerConnection.current.setRemoteDescription(
         new RTCSessionDescription(remoteRTCMessage.current),
       );
-      setType('WEBRTC_ROOM');
+
     });
 
     socket.on('ICEcandidate', data => {
@@ -174,21 +176,21 @@ const socket = SocketIOClient(SOCKET_URL, {
     };
 
     return () => {
-      socket.off('newCall');
+      //socket.off('newCall');
       socket.off('callAnswered');
       socket.off('ICEcandidate');
     };
   }, []);
 
-  useEffect(() => {
-    InCallManager.start();
-    InCallManager.setKeepScreenOn(true);
-    InCallManager.setForceSpeakerphoneOn(true);
+  // useEffect(() => {
+  //   InCallManager.start();
+  //   InCallManager.setKeepScreenOn(true);
+  //   InCallManager.setForceSpeakerphoneOn(true);
 
-    return () => {
-      InCallManager.stop();
-    };
-  }, []);
+  //   return () => {
+  //     InCallManager.stop();
+  //   };
+  // }, []);
 
   function sendICEcandidate(data) {
     socket.emit('ICEcandidate', data);
@@ -251,8 +253,7 @@ const socket = SocketIOClient(SOCKET_URL, {
     setType('JOIN');
   }
 
-
-  const StreamScreen = ({ navigation }) => {
+  const StreamScreen = () => {
   
     const localImage = require('../assets/greyscaleQPSlogo.png'); // for background image
     const otherUserId = useRef(null);
@@ -287,7 +288,7 @@ const socket = SocketIOClient(SOCKET_URL, {
       </KeyboardAvoidingView>
     )
   }
-  
+
   //style sheet for different things on record history screen
   const styles = StyleSheet.create({
     container: {
