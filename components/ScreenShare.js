@@ -22,10 +22,13 @@ const [remoteStream, setRemoteStream] = useState(null);
 
 const [type, setType] = useState('JOIN');
 
+const [localMicOn, setlocalMicOn] = useState(true);
+
+const [localWebcamOn, setlocalWebcamOn] = useState(true);
+
 const [callerId] = useState(
   Math.floor(100000 + Math.random() * 900000).toString(),
 );
-
 
 const otherUserId = useRef(null)
 
@@ -208,4 +211,42 @@ const socket = SocketIOClient(SOCKET_URL, {
     socket.emit('call', data);
   }
   
+  function switchCamera() {
+    localStream.getVideoTracks().forEach(track => {
+      track._switchCamera();
+    });
+  }
+
+  function toggleCamera() {
+    localWebcamOn ? setlocalWebcamOn(false) : setlocalWebcamOn(true);
+    localStream.getVideoTracks().forEach(track => {
+      localWebcamOn ? (track.enabled = false) : (track.enabled = true);
+    });
+  }
+
+  function toggleMic() {
+    localMicOn ? setlocalMicOn(false) : setlocalMicOn(true);
+    localStream.getAudioTracks().forEach(track => {
+      localMicOn ? (track.enabled = false) : (track.enabled = true);
+    });
+  }
+
+  function leave() {
+    peerConnection.current.close();
+    setlocalStream(null);
+    setType('JOIN');
+  }
+
+  switch (type) {
+    case 'JOIN':
+      return JoinScreen();
+    case 'INCOMING_CALL':
+      return IncomingCallScreen();
+    case 'OUTGOING_CALL':
+      return OutgoingCallScreen();
+    case 'WEBRTC_ROOM':
+      return WebrtcRoomScreen();
+    default:
+      return null;
+  }
 }
