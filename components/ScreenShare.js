@@ -176,7 +176,7 @@ const socket = SocketIOClient(SOCKET_URL, {
     };
 
     return () => {
-      //socket.off('newCall');
+      socket.off('newCall');
       socket.off('callAnswered');
       socket.off('ICEcandidate');
     };

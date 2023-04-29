@@ -2,7 +2,6 @@ import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native'
 import React, {useState, useContext} from 'react'
 import { Button, Input, Image } from "react-native-elements";    
 import { AuthContext } from '../context/AuthContext';
-import { startRecording } from '../components/ScreenShare';
 import {ImageBackground} from 'react-native'; // for background image
 
 const HomeScreen = ({ navigation }) => {
