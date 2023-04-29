@@ -21,6 +21,7 @@ import {
 
 //get context so we can access the user information to send screen share to the correct room/team
 import React, {useState, useRef, useContext, useEffect} from 'react'
+
 import { AuthContextProvider, AuthContext } from "../context/AuthContext";
 
 export default function ScreenShare({ navigation }) {
