@@ -6194,6 +6194,11 @@ react-native-incall-manager@^4.0.1:
   resolved "https://registry.npmjs.org/react-native-incall-manager/-/react-native-incall-manager-4.0.1.tgz"
   integrity sha512-Bqq7C+p7vCmCTpM8Xv6l4DJ3UJYzVr60IvkHMw1Ugs0KJswh3veBJrpk+hUPSETPT6J/5oUwxChXlNsymsh7fg==
 
+react-native-peerjs@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/react-native-peerjs/-/react-native-peerjs-1.0.4.tgz"
+  integrity sha512-Z3pPtV6B0tiW8TiRXBtyUwWBAi+sYz2/bMaae07zkBogEnF2PzwFlK9+eZZbJHSVeRohtDE9RnED5Q6QI07TFg==
+
 react-native-ratings@8.0.4:
   version "8.0.4"
   resolved "https://registry.npmjs.org/react-native-ratings/-/react-native-ratings-8.0.4.tgz"
