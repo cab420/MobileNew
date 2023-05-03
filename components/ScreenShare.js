@@ -29,6 +29,17 @@ import { AuthContextProvider, AuthContext } from "../context/AuthContext";
 export default function ScreenShare({ navigation }) {
   const { userInfo } = useContext(AuthContext);
 
+  const myPeer = new Peer(userInfo.name, {
+    host: PEER_URL,
+    port: '3001'
+  })
+
+  const socket = SocketIOClient(SOCKET_URL, {
+    transports: ['websocket'],
+    query: {
+      userInfo      
+    },
+  });
   //create video grid element
   //const videoGrid = document.getElementById('videoGrid');
 
@@ -47,24 +58,14 @@ export default function ScreenShare({ navigation }) {
 
     }    
   )
-  
-
-    const myPeer = new Peer(userInfo.name, {
-        host: PEER_URL,
-        port: '3001'
-    })
-
-    //17:25 https://www.youtube.com/watch?v=DvlyzDZDEq4&t=1208s
-
-    const socket = SocketIOClient(SOCKET_URL, {
-      transports: ['websocket'],
-      query: {
-        userInfo      
-      },
-    });
-
-    socket.emit('join team', userInfo.team, userInfo.name);
-
+   
+  /*
+    myPeer.on('open', () => {
+      console.log('opens' + roomId + userName)
+      socket.emit('join-team', roomId, userName);
+      console.log('emits')
+  })   
+  */
     socket.on('user connected', userId => {
         console.log('User connected: ' + userId);
     })
