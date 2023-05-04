@@ -26,6 +26,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-svg": "^13.9.0",
     "react-native-webrtc": "^111.0.0",
+    "simple-peer": "^9.11.1",
     "socket.io-client": "^4.6.1"
   },
   "devDependencies": {

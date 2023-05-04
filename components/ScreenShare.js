@@ -9,7 +9,7 @@ import {ImageBackground} from 'react-native'; // for background image
 import TextInputContainer from '../components/TextInputContainer';
 import InCallManager from 'react-native-incall-manager'; //may not need this
 
-import Peer from 'react-native-peerjs';
+import  Peer  from 'react-native-peerjs';
 
 
 // import WebRTC 
@@ -29,10 +29,16 @@ import { AuthContextProvider, AuthContext } from "../context/AuthContext";
 export default function ScreenShare({ navigation }) {
   const { userInfo } = useContext(AuthContext);
 
-  const myPeer = new Peer(userInfo.name, {
+  const peer_server = {
+    secure: false,
     host: PEER_URL,
-    port: '3001'
-  })
+    port: '3001',
+    path: '/'
+  }
+
+  const myPeer = new Peer(userInfo.name, peer_server)
+  console.log('shouldve made peer')
+  
 
   const socket = SocketIOClient(SOCKET_URL, {
     transports: ['websocket'],
@@ -40,11 +46,12 @@ export default function ScreenShare({ navigation }) {
       userInfo      
     },
   });
-  //create video grid element
-  //const videoGrid = document.getElementById('videoGrid');
 
-  //create own video element
-  //const myVideo = document.createElement('video');
+  myPeer.on('open', () => {
+    console.log('opens' + userInfo.team + userInfo.name)
+    socket.emit('join-team', userInfo.team, userInfo.name);
+    console.log('emits')
+})  
 
   mediaDevices.getDisplayMedia({
     video: {
@@ -55,7 +62,11 @@ export default function ScreenShare({ navigation }) {
       }
     }
   }).then(stream => {
-
+    myPeer.on('call', call => {
+      //sends stream
+      call.answer(stream);      
+      
+  })
     }    
   )
    
@@ -69,4 +80,6 @@ export default function ScreenShare({ navigation }) {
     socket.on('user connected', userId => {
         console.log('User connected: ' + userId);
     })
-}
+
+
+  }
