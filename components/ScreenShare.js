@@ -64,11 +64,26 @@ export default function ScreenShare({ navigation }) {
   }).then(stream => {
     myPeer.on('call', call => {
       //sends stream
-      call.answer(stream);      
+      call.answer(stream);     
+      
+      //allow users to connect to video
+      socket.on("user-connected", userName => {
+        console.log('user connected ' + userName)
+        connectToUser(userName, stream);
+    })
       
   })
     }    
   )
+
+  function connectToUser(userId, stream) {
+    const call = myPeer.call(userId, stream);
+    //const video = document.createElement('video');
+    call.on('stream', userVideoStream => {
+        //addPhoneStream(userVideoStream)
+    });   
+
+}
    
   /*
     myPeer.on('open', () => {
