@@ -27,7 +27,7 @@ import React, {useState, useRef, useContext, useEffect} from 'react'
 import { AuthContextProvider, AuthContext } from "../context/AuthContext";
 
 export default function ScreenShare({ navigation }) {
-  const { userInfo } = useContext(AuthContext);
+  const { userInfo } = useContext(AuthContext);  
 
   const peer_server = {
     secure: false,
@@ -35,23 +35,23 @@ export default function ScreenShare({ navigation }) {
     port: '3001',
     path: '/'
   }
-
   const myPeer = new Peer(userInfo.name, peer_server)
-  console.log('shouldve made peer')
   
+    console.log('shouldve made peer')
+  
+    const socket = SocketIOClient(SOCKET_URL, {
+      transports: ['websocket'],
+      query: {
+        userInfo      
+      },
+    });
 
-  const socket = SocketIOClient(SOCKET_URL, {
-    transports: ['websocket'],
-    query: {
-      userInfo      
-    },
-  });
-
+  
   myPeer.on('open', () => {
-    console.log('opens' + userInfo.team + userInfo.name)
-    socket.emit('join-team', userInfo.team, userInfo.name);
-    console.log('emits')
-})  
+      console.log('opens' + userInfo.team + userInfo.name)
+      socket.emit('join-team', userInfo.team, userInfo.name);
+      console.log('emits')
+  })
 
   mediaDevices.getDisplayMedia({
     video: {
@@ -62,39 +62,56 @@ export default function ScreenShare({ navigation }) {
       }
     }
   }).then(stream => {
+    
+    socket.emit('mobile-stream', userInfo.name);
+    console.log('makes it before call')
+    console.log(myPeer)
+    
     myPeer.on('call', call => {
+      console.log('getscall')
       //sends stream
-      call.answer(stream);     
-      
-      //allow users to connect to video
-      socket.on("user-connected", userName => {
-        console.log('user connected ' + userName)
-        connectToUser(userName, stream);
+      call.answer(stream);      
     })
-      
-  })
+    
+    //allow users to connect to video
+    
+    socket.on("user-connected", userName => {
+      console.log('user connected ' + userName)
+      connectToUser(userName, stream);
+    })
+    
     }    
   )
 
-  function connectToUser(userId, stream) {
-    const call = myPeer.call(userId, stream);
-    //const video = document.createElement('video');
+  function connectToUser(userName, stream) {    
+    console.log('pre calling')
+    const call = myPeer.call(userName, stream); 
+    console.log('calling')
     call.on('stream', userVideoStream => {
-        //addPhoneStream(userVideoStream)
-    });   
+      //addPhoneStream(video, userVideoStream)
+  });
+  call.on('close', () => {
+      video.remove();
+  })
+  }    
+    function disconnectFromUser() {
+      //myPeer.destroy();
+      myPeer.disconnect();      
+      console.log('tried to destroy')
+    }
+  
+  return (
+    
+    <Button 
+      onPress={() => {
+        disconnectFromUser();
+        //startRecording();
+      }}
+      title= "End Share" 
+    />        
 
-}
-   
-  /*
-    myPeer.on('open', () => {
-      console.log('opens' + roomId + userName)
-      socket.emit('join-team', roomId, userName);
-      console.log('emits')
-  })   
-  */
-    socket.on('user connected', userId => {
-        console.log('User connected: ' + userId);
-    })
-
+)
+  
+  
 
   }
