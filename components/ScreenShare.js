@@ -54,13 +54,7 @@ export default function ScreenShare({ navigation }) {
   })
 
   mediaDevices.getDisplayMedia({
-    video: {
-      mandatory: {
-        minWidth: 500, // Provide your own width, height and frame rate here
-        minHeight: 300,
-        minFrameRate: 30,
-      }
-    }
+    video: true
   }).then(stream => {
     
     socket.emit('mobile-stream', userInfo.name);
@@ -70,7 +64,7 @@ export default function ScreenShare({ navigation }) {
     myPeer.on('call', call => {
       console.log('getscall')
       //sends stream
-      call.answer(stream);      
+      call.answer(stream);          
     })
     
     //allow users to connect to video
@@ -89,10 +83,7 @@ export default function ScreenShare({ navigation }) {
     console.log('calling')
     call.on('stream', userVideoStream => {
       //addPhoneStream(video, userVideoStream)
-  });
-  call.on('close', () => {
-      video.remove();
-  })
+  });  
   }    
     function disconnectFromUser() {
       //myPeer.destroy();
