@@ -1,0 +1,3 @@
+Filepath for Phone Videos
+
+Home -> files - > android sdk built for x86 -> android -> data -> mobileNew -> files -> reactnatiive record screen 

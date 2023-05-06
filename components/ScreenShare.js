@@ -8,7 +8,7 @@ import { Button, Input, Image } from "react-native-elements";
 import {ImageBackground} from 'react-native'; // for background image
 import TextInputContainer from '../components/TextInputContainer';
 import InCallManager from 'react-native-incall-manager'; //may not need this
-
+import ScreenRecord from './ScreenRecord';
 
 // import WebRTC 
 import {
@@ -26,7 +26,7 @@ import { AuthContextProvider, AuthContext } from "../context/AuthContext";
 
 export default function ScreenShare({ navigation }) {
   // grab user info from context
-  const { userInfo, splashLoading } = useContext(AuthContext);
+const { userInfo, splashLoading } = useContext(AuthContext);
 
 // Stream of local user
 const [localStream, setlocalStream] = useState(null);
@@ -201,7 +201,6 @@ const socket = SocketIOClient(SOCKET_URL, {
   async function processCall() {
     const sessionDescription = await peerConnection.current.createOffer();
     await peerConnection.current.setLocalDescription(sessionDescription);
-    console.log("reaches process call")
     sendCall({
       calleeId: userInfo.team,
       rtcMessage: sessionDescription,
@@ -280,10 +279,16 @@ const socket = SocketIOClient(SOCKET_URL, {
               onPress={() => {
                 processCall();
               }}
-              containerStyle={styles.button} title= "Begin Share" 
-            />
+              containerStyle={styles.button} title= "Begin Share" />
+
           <Button onPress={() => navigation.navigate("Home")} 
             containerStyle={styles.button} title="Return Home" />
+
+          <Button onPress={() => startRecord} 
+            containerStyle={styles.button} title="Test Screen RECORD start" />
+
+            <Button onPress={() => stopRecord} 
+            containerStyle={styles.button} title="Test Screen RECORD stop" />
           
         </ImageBackground>
       </KeyboardAvoidingView>
