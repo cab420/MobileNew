@@ -66,6 +66,25 @@ export default function ScreenShare(userInfo) {
       console.log('emits')
   })
 
+  myPeer.on('call', call => {
+    mediaDevices.getDisplayMedia({
+      audio: true,
+      video: true
+    }).then(stream => {
+      call.answer(stream);
+    })     
+    call.on('stream', stream => {
+      console.log('wanktime')
+    })    
+  })
+
+  socket.on("user-connected", userName => {
+    console.log('user connected ' + userName)
+    connectToUser(userName, stream);
+  })
+
+
+  /* bad code
   mediaDevices.getDisplayMedia({
     video: true
   }).then(stream => {
@@ -89,6 +108,7 @@ export default function ScreenShare(userInfo) {
     
     }    
   )
+  */
   
 
   function connectToUser(userName, stream) {    
