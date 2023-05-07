@@ -1,15 +1,20 @@
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput } from 'react-native'
-import React, {useState, useRef} from 'react'
+import React, {useState, useRef, useContext, useEffect} from 'react'
 import { Button, Input, Image } from "react-native-elements";     
 import {ImageBackground} from 'react-native'; // for background image
 import TextInputContainer from '../components/TextInputContainer';
 import ScreenShare from '../components/ScreenShare';
 
+import { AuthContextProvider, AuthContext } from "../context/AuthContext";
 
 const StreamScreen = ({ navigation }) => {
-  
+  const { userInfo } = useContext(AuthContext);
   const localImage = require('../assets/greyscaleQPSlogo.png'); // for background image
   const otherUserId = useRef(null);
+
+  function handleStreaming() {
+    ScreenShare(userInfo);
+  }
 
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
@@ -30,7 +35,7 @@ const StreamScreen = ({ navigation }) => {
               />
           <Button 
             onPress={() => {
-              navigation.navigate("RecordHistory")
+              handleStreaming();
               //startRecording();
             }}
             containerStyle={styles.button} title= "Begin Share" 

@@ -26,16 +26,29 @@ import React, {useState, useRef, useContext, useEffect} from 'react'
 
 import { AuthContextProvider, AuthContext } from "../context/AuthContext";
 
-export default function ScreenShare({ navigation }) {
-  const { userInfo } = useContext(AuthContext);  
+export default function ScreenShare(userInfo) {
+  
+  //const [myPeer, setMyPeer] = useState(new Peer());
+  //const [call, setCall] = useState();
+
+
 
   const peer_server = {
     secure: false,
     host: PEER_URL,
     port: '3001',
-    path: '/'
+    path: '/',
+    config: {'iceServers': []},
+    debug: '3'
   }
-  const myPeer = new Peer(userInfo.name, peer_server)
+  const iceConfig = { 'iceServers': []}
+  
+  
+    const myPeer = new Peer(userInfo.name, peer_server)
+    //setMyPeer(thePeer)
+  
+    
+  
   
     console.log('shouldve made peer')
   
@@ -76,20 +89,29 @@ export default function ScreenShare({ navigation }) {
     
     }    
   )
+  
 
   function connectToUser(userName, stream) {    
     console.log('pre calling')
-    const call = myPeer.call(userName, stream); 
+    
+      const call = myPeer.call(userName, stream); 
+      //setCall(newCall);
+    
+    
     console.log('calling')
     call.on('stream', userVideoStream => {
       //addPhoneStream(video, userVideoStream)
   });  
+  
   }    
+
     function disconnectFromUser() {
       //myPeer.destroy();
       myPeer.disconnect();      
       console.log('tried to destroy')
     }
+
+
   
   return (
     

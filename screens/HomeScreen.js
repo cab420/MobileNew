@@ -19,7 +19,7 @@ const HomeScreen = ({ navigation }) => {
         
           <Button 
             onPress={() => { 
-              navigation.navigate("ScreenShare")             
+              navigation.navigate("StreamScreen")             
             }}
             containerStyle={styles.button} title="Share to Desktop" 
           />
