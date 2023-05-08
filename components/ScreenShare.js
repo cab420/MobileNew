@@ -26,7 +26,7 @@ import React, {useState, useRef, useContext, useEffect} from 'react'
 
 import { AuthContextProvider, AuthContext } from "../context/AuthContext";
 
-export default function ScreenShare(userInfo) {
+export default async function ScreenShare(userInfo) {
   
   //const [myPeer, setMyPeer] = useState(new Peer());
   //const [call, setCall] = useState();
@@ -71,17 +71,21 @@ export default function ScreenShare(userInfo) {
       audio: true,
       video: true
     }).then(stream => {
+      
       call.answer(stream);
+      socket.on("user-connected", userName => {
+        console.log('user connected ' + userName)
+        connectToUser(userName, stream);
+      })
+    }).catch((err) => {
+      console.log(err);
     })     
     call.on('stream', stream => {
       console.log('wanktime')
     })    
   })
 
-  socket.on("user-connected", userName => {
-    console.log('user connected ' + userName)
-    connectToUser(userName, stream);
-  })
+  
 
 
   /* bad code
