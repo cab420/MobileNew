@@ -12,7 +12,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import StreamScreen from "../screens/StreamScreen";
 
 const Stack = createNativeStackNavigator();
 
