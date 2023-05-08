@@ -85,37 +85,8 @@ export default async function ScreenShare(userInfo) {
     })    
   })
 
-  
-
-
-  /* bad code
-  mediaDevices.getDisplayMedia({
-    video: true
-  }).then(stream => {
-    
-    socket.emit('mobile-stream', userInfo.name);
-    console.log('makes it before call')
-    console.log(myPeer)
-    
-    myPeer.on('call', call => {
-      console.log('getscall')
-      //sends stream
-      call.answer(stream);          
-    })
-    
-    //allow users to connect to video
-    
-    socket.on("user-connected", userName => {
-      console.log('user connected ' + userName)
-      connectToUser(userName, stream);
-    })
-    
-    }    
-  )
-  */
-  
-
-  function connectToUser(userName, stream) {    
+ 
+  async function connectToUser(userName, stream) {    
     console.log('pre calling')
     
       const call = myPeer.call(userName, stream); 
