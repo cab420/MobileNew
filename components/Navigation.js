@@ -25,7 +25,7 @@ const globalScreenOptions = {
 }
 
 // options={{headerShown: false}} // from under component of each screen
-
+//<Stack.Screen name="ScreenShare" component={ScreenShare} /> put this back into navigation stack screen when rewady
 const Navigation = () => {
     const { userInfo, splashLoading } = useContext(AuthContext);
     return (
@@ -35,7 +35,6 @@ const Navigation = () => {
       <>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="RecordHistory" component={RecordHistoryScreen} />
-        <Stack.Screen name="ScreenShare" component={ScreenShare} />
         <Stack.Screen name="ScreenRecord" component={ScreenRecord} />
       </>
       ) : (

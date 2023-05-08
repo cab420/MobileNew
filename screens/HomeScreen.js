@@ -19,9 +19,9 @@ const HomeScreen = ({ navigation }) => {
         
           <Button 
             onPress={() => { 
-              navigation.navigate("ScreenShare")
+              //navigation.navigate("ScreenShare") 
               //this._handleOnRecording trying to maybe execute ScreenShare and ScreenRecord from here
-     
+              
             }}
             containerStyle={styles.button} title="Share to Desktop" 
           />
