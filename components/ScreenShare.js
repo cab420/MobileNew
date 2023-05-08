@@ -1,17 +1,8 @@
-
-//https://github.com/videosdk-live/webrtc/blob/main/react-native-webrtc-app/client/App.js uses this as resource
-
 import SocketIOClient from 'socket.io-client'; // import socket io
 import { SOCKET_URL, PEER_URL } from '../config/config';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput } from 'react-native'
 import { Button, Input, Image } from "react-native-elements";     
 import {ImageBackground} from 'react-native'; // for background image
-import TextInputContainer from '../components/TextInputContainer';
-import InCallManager from 'react-native-incall-manager'; //may not need this
-
-import  Peer  from 'react-native-peerjs';
-
-
 // import WebRTC 
 import {
   mediaDevices,
@@ -20,106 +11,155 @@ import {
   RTCIceCandidate,
   RTCSessionDescription,
 } from 'react-native-webrtc';
-
 //get context so we can access the user information to send screen share to the correct room/team
+import { AuthContextProvider, AuthContext } from "../context/AuthContext";
 import React, {useState, useRef, useContext, useEffect} from 'react'
 
-import { AuthContextProvider, AuthContext } from "../context/AuthContext";
+export default function ScreenShare({ navigation }) {
+  // grab user info from context
+  /*
+  const userVideo = useRef();
+  const partnerVideo = useRef();
+  const peerRef = useRef();
+  const socketRef = useRef();
+  const otherUser = useRef();
+  const userStream = useRef();
+  */
+  const { userInfo } = useContext(AuthContext);
+  const [userVideo, setUserVideo] = useState(null);
+  const [userStream, setUserStream] = useState();
+  const [peerRef, setPeerRef] = useState();
+  const [socketRef, setSocketRef] = useState(SocketIOClient(SOCKET_URL, {
+    transports: ['websocket'],
+    query: {
+      userInfo      
+    },
+  }));
+  const [otherUser, setOtherUser] = useState();
 
-export default async function ScreenShare(userInfo) {
-  
-  //const [myPeer, setMyPeer] = useState(new Peer());
-  //const [call, setCall] = useState();
+  roomID = userInfo.team;
 
+  useEffect(() => {
+      mediaDevices.getDisplayMedia({ audio: true, video: true }).then(stream => {
+          setUserVideo(stream);            
+          setUserStream(stream);
+          console.log('setuserstream!')
 
+          setSocketRef(SocketIOClient(SOCKET_URL, {
+            transports: ['websocket'],
+            query: {
+              userInfo      
+            },
+          }))
+          
+          console.log(roomID);
+          socketRef.emit("join room", roomID);
 
-  const peer_server = {
-    secure: false,
-    host: PEER_URL,
-    port: '3001',
-    path: '/',
-    config: {'iceServers': []},
-    debug: '3'
+          socketRef.on('other user', userID => {
+              console.log('other users ' + userID)
+              callUser(userID);
+              setOtherUser(userID);
+          });
+
+          socketRef.on("user joined", userID => {
+              setOtherUser(userID);
+          });
+
+          socketRef.on("offer", handleRecieveCall);
+
+          socketRef.on("answer", handleAnswer);
+
+          socketRef.on("ice-candidate", handleNewICECandidateMsg);
+      });
+
+  }, []);
+
+  function callUser(userID) {
+      setPeerRef(createPeer(userID));
+      console.log('calleduser')
+      userStream.getTracks().forEach(track => peerRef.addTrack(track, userStream));
+      console.log('promise error above')
   }
-  const iceConfig = { 'iceServers': []}
-  
-  
-    const myPeer = new Peer(userInfo.name, peer_server)
-    //setMyPeer(thePeer)
-  
-    
-  
-  
-    console.log('shouldve made peer')
-  
-    const socket = SocketIOClient(SOCKET_URL, {
-      transports: ['websocket'],
-      query: {
-        userInfo      
-      },
-    });
 
-  
-  myPeer.on('open', () => {
-      console.log('opens' + userInfo.team + userInfo.name)
-      socket.emit('join-team', userInfo.team, userInfo.name);
-      console.log('emits')
-  })
+  function createPeer(userID) {
+      const peer = new RTCPeerConnection({
+          iceServers: []
+      });
 
-  myPeer.on('call', call => {
-    mediaDevices.getDisplayMedia({
-      audio: true,
-      video: true
-    }).then(stream => {
-      
-      call.answer(stream);
-      socket.on("user-connected", userName => {
-        console.log('user connected ' + userName)
-        connectToUser(userName, stream);
+      peer.onicecandidate = handleICECandidateEvent;
+      peer.ontrack = handleTrackEvent;
+      peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID);
+
+      return peer;
+  }
+
+  function handleNegotiationNeededEvent(userID) {
+      peerRef.createOffer().then(offer => {
+          return peerRef.setLocalDescription(offer);
+      }).then(() => {
+          const payload = {
+              target: userID,
+              caller: socketRef.id,
+              sdp: peerRef.localDescription
+          };
+          socketRef.emit("offer", payload);
+      }).catch(e => console.log(e));
+  }
+
+  function handleRecieveCall(incoming) {
+      setPeerRef(createPeer());
+      const desc = new RTCSessionDescription(incoming.sdp);
+      peerRef.setRemoteDescription(desc).then(() => {
+          userStream.getTracks().forEach(track => peerRef.addTrack(track, userStream));
+      }).then(() => {
+          return peerRef.createAnswer();
+      }).then(answer => {
+          return peerRef.setLocalDescription(answer);
+      }).then(() => {
+          const payload = {
+              target: incoming.caller,
+              caller: socketRef.id,
+              sdp: peerRef.localDescription
+          }
+          socketRef.emit("answer", payload);
       })
-    }).catch((err) => {
-      console.log(err);
-    })     
-    call.on('stream', stream => {
-      console.log('wanktime')
-    })    
-  })
+  }
 
- 
-  async function connectToUser(userName, stream) {    
-    console.log('pre calling')
-    
-      const call = myPeer.call(userName, stream); 
-      //setCall(newCall);
-    
-    
-    console.log('calling')
-    call.on('stream', userVideoStream => {
-      //addPhoneStream(video, userVideoStream)
-  });  
-  
-  }    
+  function handleAnswer(message) {
+      const desc = new RTCSessionDescription(message.sdp);
+      peerRef.setRemoteDescription(desc).catch(e => console.log(e));
+  }
 
-    function disconnectFromUser() {
-      //myPeer.destroy();
-      myPeer.disconnect();      
-      console.log('tried to destroy')
-    }
+  function handleICECandidateEvent(e) {
+      if (e.candidate) {
+          const payload = {
+              target: otherUser,
+              candidate: e.candidate,
+          }
+          socketRef.emit("ice-candidate", payload);
+      }
+  }
 
+  function handleNewICECandidateMsg(incoming) {
+      const candidate = new RTCIceCandidate(incoming);
 
-  
+      peerRef.addIceCandidate(candidate)
+          .catch(e => console.log(e));
+  }
+
+  function handleTrackEvent(e) {
+      partnerVideo.srcObject = e.streams[0];
+  };
+
   return (
     
     <Button 
       onPress={() => {
-        disconnectFromUser();
+        
         //startRecording();
       }}
       title= "End Share" 
     />        
 
 )
-  
-  
-
-  }
+}

@@ -35,7 +35,7 @@ const Navigation = () => {
       <>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="RecordHistory" component={RecordHistoryScreen} />
-        <Stack.Screen name="StreamScreen" component={StreamScreen} />
+        <Stack.Screen name="ScreenShare" component={ScreenShare} />
       </>
       ) : (
       <>
