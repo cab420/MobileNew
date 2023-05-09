@@ -1,3 +1,4 @@
+/*
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput } from 'react-native'
 import React, {useState, useRef, useContext, useEffect} from 'react'
 import { Button, Input, Image } from "react-native-elements";     
@@ -88,4 +89,4 @@ const styles = StyleSheet.create({
     width: 250,
   }
 
-});
+});*/
