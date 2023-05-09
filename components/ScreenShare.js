@@ -23,10 +23,7 @@ const screenHeight = Dimensions.get('window').height;
 export default ScreenShare = _ => {
   let socket, peer;
   let config = {
-    iceServers: [
-      {urls: 'stun:stun.services.mozilla.com'},
-      {urls: 'stun:stun.l.google.com:19302'},
-    ],
+    iceServers: [],
   };
 
   const [remoteStream, setRemoteStream] = useState();
@@ -34,7 +31,7 @@ export default ScreenShare = _ => {
   let clients = {};
 
   const remote = () => {
-    socket = io();
+    socket = SocketIOClient(SOCKET_URL);
     socket
       .on('connect', _ => socket.emit('watcher'))
       .on('offer', async (id, desc) => {
@@ -64,8 +61,9 @@ export default ScreenShare = _ => {
       audio: true,
       video: true,
     });
+    console.log('begin broadcasts')
 
-    socket = io('http://192.168.1.86:8000');
+    socket = SocketIOClient(SOCKET_URL);
     socket
       .on('connect', _ => socket.emit('broadcaster'))
       .emit('watcher')
@@ -73,6 +71,7 @@ export default ScreenShare = _ => {
         peer = new RTCPeerConnection(config);
         clients[id] = peer;
         peer.addStream(stream);
+        console.log('addedstream')
         peer
           .createOffer()
           .then(sdp => peer.setLocalDescription(sdp))
