@@ -67,7 +67,7 @@ export default async function ScreenShare(userInfo) {
   })
 
   myPeer.on('call', call => {
-    mediaDevices.getDisplayMedia({
+    mediaDevices.getUserMedia({
       audio: true,
       video: true
     }).then(stream => {
