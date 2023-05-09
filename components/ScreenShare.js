@@ -22,6 +22,7 @@ const screenHeight = Dimensions.get('window').height;
 
 export default ScreenShare = _ => {
   let socket, peer;
+  let peers = {}
   let config = {
     iceServers: [],
   };
@@ -35,23 +36,23 @@ export default ScreenShare = _ => {
     socket
       .on('connect', _ => socket.emit('watcher'))
       .on('offer', async (id, desc) => {
-        peer = new RTCPeerConnection(config);
-        peer
+        peers[id] = new RTCPeerConnection(config);
+        peers[id]
           .setRemoteDescription(new RTCSessionDescription(desc))
-          .then(_ => peer.createAnswer())
-          .then(sdp => peer.setLocalDescription(sdp))
-          .then(_ => socket.emit('answer', id, peer.localDescription));
-        peer.onicecandidate = e => {
+          .then(_ => peers[id].createAnswer())
+          .then(sdp => peers[id].setLocalDescription(sdp))
+          .then(_ => socket.emit('answer', id, peers[id].localDescription));
+          peers[id].onicecandidate = e => {
           e.candidate && socket.emit('candidate', id, e.candidate);
         };
-        peer.onaddstream = e =>
+        peers[id].onaddstream = e =>
           e.stream && remoteStream !== e.stream && setRemoteStream(e.stream);
       })
       .on('candidate', (id, candidate) =>
-        peer.addIceCandidate(new RTCIceCandidate(candidate)),
+        peers[id].addIceCandidate(new RTCIceCandidate(candidate)),
       )
       .on('disconnectPeer', _ => {
-        peer.close();
+        peers[id].close();
         socket.disconnect(true);
       });
   };
@@ -63,27 +64,30 @@ export default ScreenShare = _ => {
     });
     console.log('begin broadcasts')
 
-    socket = SocketIOClient(SOCKET_URL);
+    socket = SocketIOClient(SOCKET_URL, {
+      transports: ['websocket']
+    });
     socket
       .on('connect', _ => socket.emit('broadcaster'))
       .emit('watcher')
       .on('watcher', id => {
-        peer = new RTCPeerConnection(config);
-        clients[id] = peer;
-        peer.addStream(stream);
+        console.log('on watcher triggers')
+        peers[id] = new RTCPeerConnection(config);
+        clients[id] = peers[id];
+        stream.getTracks().forEach(track => peers[id].addTrack(track, stream));
         console.log('addedstream')
-        peer
+        peers[id]
           .createOffer()
-          .then(sdp => peer.setLocalDescription(sdp))
-          .then(_ => socket.emit('offer', id, peer.localDescription));
-        peer.onicecandidate = e =>
+          .then(sdp => peers[id].setLocalDescription(sdp))
+          .then(_ => socket.emit('offer', id, peers[id].localDescription));
+          peers[id].onicecandidate = e =>
           e.candidate && socket.emit('candidate', id, e.candidate);
       })
       .on('answer', (id, desc) =>
-        clients[id].setRemoteDescription(new RTCSessionDescription(desc)),
+        peers[id].setRemoteDescription(new RTCSessionDescription(desc)),
       )
       .on('candidate', (id, candidate) =>
-        clients[id].addIceCandidate(new RTCIceCandidate(candidate)),
+        peers[id].addIceCandidate(new RTCIceCandidate(candidate)),
       )
       .on('disconnectPeer', id => {
         const client = clients[id];
