@@ -24,7 +24,10 @@ export default ScreenShare = _ => {
   let socket, peer;
   let peers = {}
   let config = {
-    iceServers: [],
+        iceServers: [
+      {urls: 'stun:stun.services.mozilla.com'},
+      {urls: 'stun:stun.l.google.com:19302'},
+    ],
   };
 
   const [remoteStream, setRemoteStream] = useState();
@@ -45,8 +48,9 @@ export default ScreenShare = _ => {
           peers[id].onicecandidate = e => {
           e.candidate && socket.emit('candidate', id, e.candidate);
         };
-        peers[id].onaddstream = e =>
+        peers[id].ontrack = e =>
           e.stream && remoteStream !== e.stream && setRemoteStream(e.stream);
+          console.log("something here")
       })
       .on('candidate', (id, candidate) =>
         peers[id].addIceCandidate(new RTCIceCandidate(candidate)),
