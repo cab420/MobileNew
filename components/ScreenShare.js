@@ -78,7 +78,7 @@ export default ScreenShare = _ => {
         console.log('on watcher triggers')
         peers[id] = new RTCPeerConnection(config);
         clients[id] = peers[id];
-        stream.getTracks().forEach(track => peers[id].addTrack(track, stream));
+        //stream.getTracks().forEach(track => peers[id].addTrack( track, stream ));        
         console.log('addedstream')
         peers[id]
           .createOffer()
@@ -86,6 +86,7 @@ export default ScreenShare = _ => {
           .then(_ => socket.emit('offer', id, peers[id].localDescription));
           peers[id].onicecandidate = e =>
           e.candidate && socket.emit('candidate', id, e.candidate);
+          stream.getTracks().forEach(track => peers[id].addTrack( track, stream ));   
       })
       .on('answer', (id, desc) =>
         peers[id].setRemoteDescription(new RTCSessionDescription(desc)),
