@@ -1,8 +1,10 @@
 import RecordScreen, { RecordingResult } from 'react-native-record-screen'; //importing this for screen RECORDING not sharing
 import React, { useState, useMemo, useCallback } from 'react';
-import Video from 'react-native-video';
+import {uploadFiles} from 'react-native-fs';
+import { BASE_URL } from '../config/config';
 //import RNFS from 'react-native-fs';
-
+import axios from 'axios';
+import { Button, Input, Image } from "react-native-elements";
 import {
   StyleSheet,
   View,
@@ -12,231 +14,249 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableHighlight,
-  Button,
-  Alert
+  Alert,
+  KeyboardAvoidingView
 } from 'react-native';
 
 // currently trying to print file path to URL and and set the default filepath to documents or photos or whatever
 
 export default function ScreenRecord() {
-  
-  const [uri, setUri] = useState<string>('');
+  const [f, setF] = useState('');
+  const [uri1, setUri1] = useState<string>('');
   const [recording, setRecording] = useState<boolean>(false);
   const [url, setUrl] = useState<string>('');
+  const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/"
+  let regex = new RegExp(/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
 
-  const _handlestop = async () => {
+  const _handleOnRecording = async () => {
     if (recording) {
       setRecording(false);
       const res = await RecordScreen.stopRecording().catch((error: any) =>
         console.warn(error)
       );
+      console.log('res', res);
       if (res?.status === 'success') {
-        console.log("res", res);
-        setUri(res.result.outputURL);
-        console.log("res result output", res.result.outputURL);
-        //console.log(RecordingResult);
-        
-      }}
-    }
-
-    const _handlestart = async () => {
+        setUri1(res.result.outputURL);
+      }
+    } else {
+      setUri1('');
       setRecording(true);
-      const res = await RecordScreen.startRecording({ mic: false, fps: 30, bitrate: 236390400 }).catch((error: any) => {
+      const res = await RecordScreen.startRecording({ mic: false, fps: 30, bitrate: 1024000 }).catch((error: any) => {
         console.warn(error);
         setRecording(false);
+        setUri1('');
       });
 
       if (res === RecordingResult.PermissionError) {
         Alert.alert(res);
         setRecording(false);
-        setUri('');
+        setUri1('');
       }
     }
-    
-    const btnStyle = useMemo(() => {
-      return recording ? styles.btnActive : styles.btnDefault;
-    }, [recording]);
+  };
 
-  // const rnfsoutput = (() => {
-  //   RNFS.readDir(RNFS.DocumentDirectoryPath) // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
-  //   .then((result2: any) => {
-  //     console.log('GOT RESULT', result2);
-  
-  //     // stat the first file
-  //     return Promise.all([RNFS.stat(result2[0].path), result2[0].path]);
-  //   })
-  //   .then((statResult: any) => {
-  //     if (statResult[0].isFile()) {
-  //       // if we have a file, read it
-  //       return RNFS.readFile(statResult[1], 'utf8');
-  //     }
-  
-  //     return 'no file';
-  //   })
-  //   .then((contents: any) => {
-  //     // log the file contents
-  //     console.log(contents);
-  //   })
-  //   .catch((err: any) => {
-  //     console.log(err.message, err.code);
-  //   });
-  // })
+  const upload = (() => {
+    setF(uri1);
+    console.log(f);
+    var files = [
+      {
+        name: "",
+        filename: `${regex}`,
+        filepath: videoPath + regex,
+        filetype: ""
+      },
+    ];
+    console.log(files)
+    //.post(`${BASE_URL}/api/auth/login`,
+    uploadFiles({
+      toUrl: `${BASE_URL}/api/files`,
+      files: files,
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      //invoked when the uploading starts.
+      begin: () => {},
+      // You can use this callback to show a progress indicator.
+      progress: ({ totalBytesSent, totalBytesExpectedToSend }) => {},
+    });
 
-  // const _handleOnCleanSandbox = useCallback(() => {
-  //   RecordScreen.clean();
-  //   setUri('');
-  // }, []);
+// const formData = new FormData();
+//formData.append('files', getFile);
 
-  // const btnStyle = useMemo(() => {
-  //   return recording ? styles.btnActive : styles.btnDefault;
-  // }, [recording]);
+
+// axios
+//   .post(`API_URL`, formData, {
+//     headers: {
+//       'Content-Type': 'multipart/form-data'
+//     }
+//   })
+//   .then(response => {})
+//   .catch(err => {});
+  })
+
+  const btnStyle = useMemo(() => {
+    return recording ? styles.button4active : styles.button4;
+  }, [recording]);
+
+  const textStyle = useMemo(() => {
+    return recording ? styles.button4active : styles.button4;
+  }, [recording]);
 
   return (
     <>
-      <StatusBar barStyle="light-content" />
-      <View style={styles.navbar}>
-        <View />
-        {recording ? (
-          <View style={styles.recordingMark}>
-            <Text style={styles.recordingMarkText}>Recording</Text>
-          </View>
-        ) : (
-          <View>
-            
-          </View>
-        )}
-      </View>
-      <SafeAreaView style={styles.container}>
-        <ScrollView>
-          <View style={styles.scrollView}>
-            <Text style={styles.heading}>Lorem ipsum dolor sit amet</Text>
-            
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-
-      <View style={styles.btnContainer}>
-        <TouchableHighlight onPress={
-          () => {
-            _handlestart() 
-            //rnfsoutput()
-          }
-         
-          
-          }>
-          <View style={styles.btnWrapper}>
-            <View style={btnStyle} />
-          </View>
-        </TouchableHighlight>
-      </View>
-
-      <View style={styles.btnContainer}>
-        <TouchableHighlight onPress={
-          () => {
-            _handlestop() 
-            //rnfsoutput()
-          }
-         
-          
-          }>
-          <View style={styles.btnWrapper}>
-            <View style={btnStyle} />
-          </View>
-        </TouchableHighlight>
-      </View>
-
-      {uri ? (
-        <View style={styles.preview}>
-          <Video
-            source={{
-              uri,
-            }}
-            style={styles.video}
+<KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <View style={styles.iconRow}>
+        <View style={styles.rectStack}>
+          <View style={styles.rect}></View>
+          <View style={styles.rect6}>
+            <TouchableHighlight style={styles.button2}>
+              <View style={styles.button3}>
+              <View style={btnStyle} />
+                </View>
+              </TouchableHighlight >
+            <Text style={styles.screenRecording}>Screen Recording</Text>
+            <View style={styles.rect7}>
+            <TouchableHighlight onPress={_handleOnRecording}>
+            {recording ? (
+              <Text style={styles.startRecording}>Stop Recording</Text>
+              ) : <Text style={styles.startRecording}>Start Recording</Text>}
+              </TouchableHighlight>
+            </View>
+            {uri1 ? (
+            <Button 
+            onPress={
+              upload
+            }
+            containerStyle={styles.uploadbtn} title= "Upload"
           />
+        
+        ) : null}
+          </View>
         </View>
-      ) : null}
+      </View>
+      </KeyboardAvoidingView>
     </>
-  )};
-
+  );
+}
 
 const styles = StyleSheet.create({
-  navbar: {
-    height: 80,
-    backgroundColor: '#212121',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  recordingMark: {
-    backgroundColor: 'red',
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-    marginBottom: 10,
-    borderRadius: 24,
-  },
-  recordingMarkText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
+
   container: {
     flex: 1,
   },
-  scrollView: {
-    flex: 1,
-    padding: 24,
-  },
-  heading: {
-    fontSize: 24,
-    lineHeight: 32,
-    paddingBottom: 16,
-    fontWeight: 'bold',
-  },
   text: {
-    fontSize: 16,
+    fontSize: 20,
     lineHeight: 24,
-    paddingBottom: 36,
+    marginTop: 15,
+    color: 'white'
   },
-  btnContainer: {
-    height: 100,
-    paddingTop: 12,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: '#212121',
+  text2: {
+    fontSize: 20,
+    lineHeight: 24,
+    marginTop: 15,
+    color: 'white'
   },
-  btnWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 60,
-    height: 60,
-    backgroundColor: '#fff',
-    borderRadius: 30,
+  texttest: {
+    fontSize: 20,
+    lineHeight: 24,
+    marginTop: 15,
+    color: 'black'
   },
-  btnDefault: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    borderWidth: 4,
-    borderStyle: 'solid',
-    borderColor: '#212121',
+  icon: {
+    color: "rgba(128,128,128,1)",
+    fontSize: 40,
+    marginTop: 73
   },
-  btnActive: {
-    width: 36,
-    height: 36,
-    backgroundColor: 'red',
-    borderRadius: 8,
+  rect: {
+    top: 0,
+    left: 300,
+    width: 375,
+    height: 741,
+    backgroundColor: "rgba(255,255,255,1)"
   },
-  preview: {
-    position: 'absolute',
-    right: 0,
-    bottom: 116,
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height / 3 * 2,
-    zIndex: 1,
-    padding: 8,
-    backgroundColor: '#aaa',
+  rect6: {
+    width: 331,
+    height: 142,
+    position: "absolute",
+    backgroundColor: "rgba(88,88,89,1)",
+    borderRadius: 20,
+    left: 56,
+    top: 228
   },
-  video: {
+  button2: {
+    width: 49,
+    height: 46,
+    backgroundColor: "#E6E6E6",
+    borderRadius: 100,
+    marginTop: 6,
+    marginLeft: 137
+  },
+  button3: {
+    width: 46,
+    height: 42,
+    backgroundColor: "rgba(88,88,89,1)",
+    borderRadius: 100,
+    marginTop: 2,
+    marginLeft: 1
+  },
+  button4: {
+    width: 24,
+    height: 24,
+    backgroundColor: "#E6E6E6",
+    borderRadius: 100,
+    marginTop: 9,
+    marginLeft: 11
+  },
+  button4active: {
+    width: 24,
+    height: 24,
+    backgroundColor: "red",
+    borderRadius: 100,
+    marginTop: 9,
+    marginLeft: 11
+  },
+  screenRecording: {
+    fontFamily: "roboto-regular",
+    color: "rgba(235,230,230,1)",
+    fontSize: 18,
+    marginTop: 7,
+    marginLeft: 96
+  },
+  rect7: {
+    width: 331,
+    height: 54,
+    backgroundColor: "rgba(54,54,54,1)",
+    borderBottomRightRadius: 17,
+    borderBottomLeftRadius: 17,
+    marginTop: 6
+  },
+  startRecording: {
+    fontFamily: "roboto-700",
+    color: "rgba(255,255,255,1)",
+    fontSize: 18,
+    marginTop: 16,
+    marginLeft: 104,
+  },
+  rectStack: {
+    width: 475,
+    height: 741,
+    marginLeft: 507
+  },
+  iconRow: {
+    height: 741,
+    flexDirection: "row",
     flex: 1,
+    marginRight: -122,
+    marginLeft: -525,
+    marginTop: 8
   },
+  uploadbtn: {
+    width: 150,
+    height: 50,
+    //alignItems: 'center',
+    //justifyContent: 'center',
+    left: 90,
+    marginTop: 100
+  }
 });

@@ -18,12 +18,10 @@ const HomeScreen = ({ navigation }) => {
           <Text></Text>
         
           <Button 
-            onPress={() => { 
-              //navigation.navigate("ScreenShare") 
-              //this._handleOnRecording trying to maybe execute ScreenShare and ScreenRecord from here
-              
+            onPress={() => {
+              navigation.navigate("ScreenRecord")
             }}
-            containerStyle={styles.button} title="Share to Desktop" 
+            containerStyle={styles.button} title="Record Session" 
           />
         
           <Text></Text>
@@ -44,12 +42,6 @@ const HomeScreen = ({ navigation }) => {
           />
 
             <Text></Text>
-          <Button 
-            onPress={() => {
-              navigation.navigate("ScreenRecord")
-            }}
-            containerStyle={styles.button} title="ScreenRecord" 
-          />
 
           </ImageBackground>
 
