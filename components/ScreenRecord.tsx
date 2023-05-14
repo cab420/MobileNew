@@ -1,7 +1,8 @@
 import RecordScreen, { RecordingResult } from 'react-native-record-screen'; //importing this for screen RECORDING not sharing
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useContext } from 'react';
 import {uploadFiles} from 'react-native-fs';
 import { BASE_URL } from '../config/config';
+import { AuthContext } from '../context/AuthContext';
 //import RNFS from 'react-native-fs';
 import axios from 'axios';
 import { Button, Input, Image } from "react-native-elements";
@@ -21,12 +22,14 @@ import {
 // currently trying to print file path to URL and and set the default filepath to documents or photos or whatever
 
 export default function ScreenRecord() {
+  const {isLoading, logout, userInfo} = useContext(AuthContext);
   const [f, setF] = useState('');
-  const [uri1, setUri1] = useState<string>('');
+  const [vidPath, setvidPath] = useState<string>('');
   const [recording, setRecording] = useState<boolean>(false);
   const [url, setUrl] = useState<string>('');
   const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/"
   let regex = new RegExp(/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
+  let regex2 = new RegExp(/\/storage\/emulated\/0\/Android\/data\/com\.mobilenew\/files\/ReactNativeRecordScreen\/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
 
   const _handleOnRecording = async () => {
     if (recording) {
@@ -36,54 +39,100 @@ export default function ScreenRecord() {
       );
       console.log('res', res);
       if (res?.status === 'success') {
-        setUri1(res.result.outputURL);
+        setvidPath(res.result.outputURL);
       }
     } else {
-      setUri1('');
+      setvidPath('');
       setRecording(true);
       const res = await RecordScreen.startRecording({ mic: false, fps: 30, bitrate: 1024000 }).catch((error: any) => {
         console.warn(error);
         setRecording(false);
-        setUri1('');
+        setvidPath('');
       });
 
       if (res === RecordingResult.PermissionError) {
         Alert.alert(res);
         setRecording(false);
-        setUri1('');
+        setvidPath('');
       }
     }
   };
 
+  
+
   const upload = (() => {
-    setF(uri1);
-    console.log(f);
-    var files = [
-      {
-        name: "",
-        filename: `${regex}`,
-        filepath: videoPath + regex,
-        filetype: ""
-      },
-    ];
-    console.log(files)
+    let str = vidPath
+    let pattern = regex
+    let result = str.match(pattern)![0];
+    console.log("2nd",result)
+    console.log("1st", str);
+
+const data = new FormData();
+data.append('file', {
+  uri: `file://${str}`,
+  name: `${result}`,
+  type: 'video/mp4',
+});
+console.log("3rd",data)
+// axios({
+//   method: 'post',
+//   url: `${BASE_URL}/api/files/getfiles`,
+//   data: data,
+//   headers: {'Content-Type': 'multipart/form-data' }
+//   })
+//   .then(function (response) {
+//       //handle success
+//       console.log(response);
+//   })
+//   .catch((error) => {
+//       //handle error
+//       console.log(error);
+//   })
+
+  axios.post(`${BASE_URL}/api/files/getfiles`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }).then((response) => {
+    console.log(response);
+  }).catch((error) => {
+    console.log(error);
+  })
+
+  })
+  
+// axios
+//   .post(`${BASE_URL}/api/files/getfiles`, data, {
+//     headers: {
+//       'Content-Type': 'multipart/form-data'
+//     }
+//   })
+//   .then(response => {})
+//   .catch(err => {});
+    // var files = [
+    //   {
+    //     name: `${userInfo.name}`,
+    //     filename: `${result}`,
+    //     filepath: vidPath,
+    //     filetype: ""
+    //   },
+    // ];
     //.post(`${BASE_URL}/api/auth/login`,
-    uploadFiles({
-      toUrl: `${BASE_URL}/api/files`,
-      files: files,
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-      },
-      //invoked when the uploading starts.
-      begin: () => {},
-      // You can use this callback to show a progress indicator.
-      progress: ({ totalBytesSent, totalBytesExpectedToSend }) => {},
-    });
-
-// const formData = new FormData();
-//formData.append('files', getFile);
-
+    //const formData = new FormData();
+    //formData.append('files', )
+    // uploadFiles({
+    //   toUrl: `${BASE_URL}/api/files/getfiles`,
+    //   files: files,
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     'Content-Type': 'multipart/form-data'
+    //   },
+    //   //invoked when the uploading starts.
+    //   begin: () => {},
+    //   // You can use this callback to show a progress indicator.
+    //   progress: ({ totalBytesSent, totalBytesExpectedToSend }) => {},
+    // });
 
 // axios
 //   .post(`API_URL`, formData, {
@@ -93,7 +142,7 @@ export default function ScreenRecord() {
 //   })
 //   .then(response => {})
 //   .catch(err => {});
-  })
+  
 
   const btnStyle = useMemo(() => {
     return recording ? styles.button4active : styles.button4;
@@ -123,7 +172,7 @@ export default function ScreenRecord() {
               ) : <Text style={styles.startRecording}>Start Recording</Text>}
               </TouchableHighlight>
             </View>
-            {uri1 ? (
+            {vidPath ? (
             <Button 
             onPress={
               upload
@@ -182,7 +231,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(88,88,89,1)",
     borderRadius: 20,
     left: 56,
-    top: 228
+    top: 280
   },
   button2: {
     width: 49,
