@@ -6,6 +6,7 @@ import RecordHistoryScreen from "../screens/RecordHistory";
 import ScreenRecord from './ScreenRecord'
 //import StreamScreen from "../screens/StreamScreen";
 import ScreenShare from "./ScreenShare"
+import fileReader from "./ScreenRecordHistory"
 
 import React, {useContext} from "react";
 import { AuthContextProvider, AuthContext } from "../context/AuthContext";
@@ -34,7 +35,7 @@ const Navigation = () => {
       {userInfo.accessToken ? (
       <>
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="RecordHistory" component={RecordHistoryScreen} />
+        <Stack.Screen name="RecordHistory" component={fileReader} />
         <Stack.Screen name="ScreenRecord" component={ScreenRecord} />
       </>
       ) : (

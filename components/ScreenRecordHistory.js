@@ -1,5 +1,5 @@
 import RecordScreen, { RecordingResult } from 'react-native-record-screen'; //importing this for screen RECORDING not sharing
-import React, { useState, useMemo, useCallback, useContext } from 'react';
+import React, { useState, useMemo, useCallback, useContext, useEffect } from 'react';
 import {uploadFiles} from 'react-native-fs';
 import { BASE_URL } from '../config/config';
 import { AuthContext } from '../context/AuthContext';
@@ -17,96 +17,106 @@ import {
   ScrollView,
   TouchableHighlight,
   Alert,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  FlatList
 } from 'react-native';
 
 // currently trying to print file path to URL and and set the default filepath to documents or photos or whatever
 
-export default function ScreenRecord() {
+export default function fileReader() {
   const {isLoading, logout, userInfo} = useContext(AuthContext);
   const [f, setF] = useState('');
-  const [vidPath, setvidPath] = useState<string>('');
-  const [recording, setRecording] = useState<boolean>(false);
-  const [url, setUrl] = useState<string>('');
+  //const [vidPath, setvidPath] = useState<string>('');
+  //const [recording, setRecording] = useState<boolean>(false);
+  //const [url, setUrl] = useState<string>('');
   const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/"
   let regex = new RegExp(/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
   let regex2 = new RegExp(/\/storage\/emulated\/0\/Android\/data\/com\.mobilenew\/files\/ReactNativeRecordScreen\/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
 
-  
-  
-
-  const upload = (() => {
-    let str = vidPath
-    let pattern = regex
-    let result = str.match(pattern)![0];
-    console.log("2nd",result)
-    console.log("1st", str);
-
-const data = new FormData();
-data.append('file', {
-  uri: `file://${str}`,
-  name: `${result}`,
-  type: 'video/mp4',
-});
-console.log("3rd",data)
-  axios.post(`${BASE_URL}/api/files/getfiles`, data, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  }).then((response) => {
-    console.log(response);
-  }).catch((error) => {
-    console.log(error);
-  })
-
-  })
-  
-
-  const btnStyle = useMemo(() => {
-    return recording ? styles.button4active : styles.button4;
-  }, [recording]);
-
-  const textStyle = useMemo(() => {
-    return recording ? styles.button4active : styles.button4;
-  }, [recording]);
-
-  return (
-    <>
-<KeyboardAvoidingView behavior="padding" style={styles.container}>
-      <View style={styles.iconRow}>
-        <View style={styles.rectStack}>
-          <View style={styles.rect}></View>
-          <View style={styles.rect6}>
-            <TouchableHighlight style={styles.button2}>
-              <View style={styles.button3}>
-              <View style={btnStyle} />
-                </View>
-              </TouchableHighlight >
-            <Text style={styles.screenRecording}>Screen Recording</Text>
-            <View style={styles.rect7}>
-            
-            {recording ? (
-              <Text style={styles.startRecording}>Stop Recording</Text>
-              ) : <Text style={styles.startRecording}>Start Recording</Text>}
-             
-            </View>
-            {vidPath ? (
-            <Button 
-            onPress={
-              upload
-            }
-            containerStyle={styles.uploadbtn} title= "Upload"
-          />
-        
-        ) : null}
-          </View>
-        </View>
+  const [files, setFiles] = useState([])
+  const getFileContent = async (path) => {
+    const reader = await RNFS.readDir(path);
+    setFiles(reader);
+  };
+  useEffect(() => {
+    getFileContent(videoPath); //run the function on the first render.
+  }, []);
+  //this component will render our list item to the UI
+  const Item = ({ name, isFile }) => {
+    return (
+      <View>
+        <Text style={styles.name}>Name: {name}</Text>
+        <Text> {isFile ? "It is a file" : "It's a folder"}</Text>
       </View>
-      </KeyboardAvoidingView>
-    </>
+    );
+  };
+  const renderItem = ({ item, index }) => {
+    return (
+      <View>
+        <Text style={styles.title}>{index}</Text>
+        {/* The isFile method indicates whether the scanned content is a file or a folder*/}
+        <Item name={item.name} isFile={item.isFile()} />
+      </View>
+    );
+  };
+  return (
+    <SafeAreaView>
+      <FlatList
+        data={files}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.name}
+      />
+    </SafeAreaView>
   );
-}
+  }
 
+// get a list of files and directories in the main bundle
+// RNFS.readDir(RNFS.MainBundlePath) // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
+//   .then((result) => {
+//     console.log('GOT RESULT', result);
+
+//     // stat the first file
+//     return Promise.all([RNFS.stat(result[0].path), result[0].path]);
+//   })
+//   .then((statResult) => {
+//     if (statResult[0].isFile()) {
+//       // if we have a file, read it
+//       return RNFS.readFile(statResult[1], 'utf8');
+//     }
+
+//     return 'no file';
+//   })
+//   .then((contents) => {
+//     // log the file contents
+//   })
+
+
+//   const upload = (() => {
+//     let str = vidPath
+//     let pattern = regex
+//     let result = str.match(pattern)![0];
+//     console.log("2nd",result)
+//     console.log("1st", str);
+
+// const data = new FormData();
+// data.append('file', {
+//   uri: `file://${str}`,
+//   name: `${result}`,
+//   type: 'video/mp4',
+// });
+// console.log("3rd",data)
+//   axios.post(`${BASE_URL}/api/files/getfiles`, data, {
+//     headers: {
+//       'Content-Type': 'multipart/form-data',
+//     },
+//   }).then((response) => {
+//     console.log(response);
+//   }).catch((error) => {
+//     console.log(error);
+//   })
+
+//   })
+  
 const styles = StyleSheet.create({
 
   container: {
