@@ -4,7 +4,7 @@ import { Button, Input, Image } from "react-native-elements";
 import { AuthContext } from '../context/AuthContext';
 import {ImageBackground} from 'react-native'; // for background image
 import ScreenRecord, {_handleOnRecording} from '../components/ScreenRecord'
-import fileReader from '../components/ScreenRecordHistory';
+import FileReader from '../components/ScreenRecordHistory';
 
 const HomeScreen = ({ navigation }) => {
     const {isLoading, logout, userInfo} = useContext(AuthContext);
