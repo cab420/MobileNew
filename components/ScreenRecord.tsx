@@ -1,6 +1,6 @@
 import RecordScreen, { RecordingResult } from 'react-native-record-screen'; //importing this for screen RECORDING not sharing
 import React, { useState, useMemo, useCallback, useContext } from 'react';
-import {uploadFiles} from 'react-native-fs';
+import * as RNFS from 'react-native-fs';
 import { BASE_URL } from '../config/config';
 import { AuthContext } from '../context/AuthContext';
 //import RNFS from 'react-native-fs';
@@ -29,7 +29,7 @@ export default function ScreenRecord() {
   const [url, setUrl] = useState<string>('');
   const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/"
   let regex = new RegExp(/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
-  let regex2 = new RegExp(/\/storage\/emulated\/0\/Android\/data\/com\.mobilenew\/files\/ReactNativeRecordScreen\/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
+  //let regex2 = new RegExp(/\/storage\/emulated\/0\/Android\/data\/com\.mobilenew\/files\/ReactNativeRecordScreen\/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
 
   const _handleOnRecording = async () => {
     if (recording) {
@@ -63,9 +63,17 @@ export default function ScreenRecord() {
   const upload = (() => {
     let str = vidPath
     let pattern = regex
-    let result = str.match(pattern)![0];
-    console.log("2nd",result)
-    console.log("1st", str);
+    let result = str.match(pattern)![0]; //extract the video name from the path e.g. HDR2023-05-05-05.mp4
+    console.log("file of this video",result)
+    console.log("entire video path", str);
+    console.log("video path without file", videoPath)
+
+    const truepath = vidPath
+    const newpath =  videoPath + 'alex.mp4'; //rename the file to the /screenRecords folder poath and then a  string
+    RNFS.moveFile(truepath, newpath) //perform rename operation by moving file to same location
+
+  
+    console.log("rename", newpath)
 
 const data = new FormData();
 data.append('file', {
@@ -74,76 +82,21 @@ data.append('file', {
   type: 'video/mp4',
 });
 console.log("3rd",data)
-// axios({
-//   method: 'post',
-//   url: `${BASE_URL}/api/files/getfiles`,
-//   data: data,
-//   headers: {'Content-Type': 'multipart/form-data' }
-//   })
-//   .then(function (response) {
-//       //handle success
-//       console.log(response);
-//   })
-//   .catch((error) => {
-//       //handle error
-//       console.log(error);
-//   })
 
-  axios.post(`${BASE_URL}/api/files/getfiles`, data, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  }).then((response) => {
-    console.log(response);
-  }).catch((error) => {
-    console.log(error);
-  })
+})//end upload function
 
-  })
+  // axios.post(`${BASE_URL}/api/files/getfiles`, data, {
+  //   headers: {
+  //     'Content-Type': 'multipart/form-data',
+  //   },
+  // }).then((response) => {
+  //   console.log(response);
+  // }).catch((error) => {
+  //   console.log(error);
+  // })
+
+  // })
   
-// axios
-//   .post(`${BASE_URL}/api/files/getfiles`, data, {
-//     headers: {
-//       'Content-Type': 'multipart/form-data'
-//     }
-//   })
-//   .then(response => {})
-//   .catch(err => {});
-    // var files = [
-    //   {
-    //     name: `${userInfo.name}`,
-    //     filename: `${result}`,
-    //     filepath: vidPath,
-    //     filetype: ""
-    //   },
-    // ];
-    //.post(`${BASE_URL}/api/auth/login`,
-    //const formData = new FormData();
-    //formData.append('files', )
-    // uploadFiles({
-    //   toUrl: `${BASE_URL}/api/files/getfiles`,
-    //   files: files,
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     'Content-Type': 'multipart/form-data'
-    //   },
-    //   //invoked when the uploading starts.
-    //   begin: () => {},
-    //   // You can use this callback to show a progress indicator.
-    //   progress: ({ totalBytesSent, totalBytesExpectedToSend }) => {},
-    // });
-
-// axios
-//   .post(`API_URL`, formData, {
-//     headers: {
-//       'Content-Type': 'multipart/form-data'
-//     }
-//   })
-//   .then(response => {})
-//   .catch(err => {});
-  
-
   const btnStyle = useMemo(() => {
     return recording ? styles.button4active : styles.button4;
   }, [recording]);
@@ -187,8 +140,9 @@ console.log("3rd",data)
       </KeyboardAvoidingView>
     </>
   );
-}
+  
 
+}
 const styles = StyleSheet.create({
 
   container: {
@@ -308,4 +262,5 @@ const styles = StyleSheet.create({
     left: 90,
     marginTop: 100
   }
+
 });
