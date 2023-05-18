@@ -16,7 +16,7 @@ import {
   ScrollView,
   TouchableHighlight,
   Alert,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
 } from 'react-native';
 
 // currently trying to print file path to URL and and set the default filepath to documents or photos or whatever
@@ -26,7 +26,9 @@ export default function ScreenRecord() {
   const [f, setF] = useState('');
   const [vidPath, setvidPath] = useState<string>('');
   const [recording, setRecording] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
   const [url, setUrl] = useState<string>('');
+  const [rename, setRename] = useState<string>('');
   const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/"
   let regex = new RegExp(/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
   //let regex2 = new RegExp(/\/storage\/emulated\/0\/Android\/data\/com\.mobilenew\/files\/ReactNativeRecordScreen\/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
@@ -58,9 +60,9 @@ export default function ScreenRecord() {
     }
   };
 
-  
+  //const disableOnClick = event => event.currentTarget.disabled = true
 
-  const upload = (() => {
+  const saveFile = (() => {
     let str = vidPath
     let pattern = regex
     let result = str.match(pattern)![0]; //extract the video name from the path e.g. HDR2023-05-05-05.mp4
@@ -69,19 +71,19 @@ export default function ScreenRecord() {
     console.log("video path without file", videoPath)
 
     const truepath = vidPath
-    const newpath =  videoPath + 'alex.mp4'; //rename the file to the /screenRecords folder poath and then a  string
-    RNFS.moveFile(truepath, newpath) //perform rename operation by moving file to same location
+    const newpath =  videoPath + rename + '.mp4'; //rename the file to the /screenRecords folder poath and then a  string
 
+    RNFS.moveFile(truepath, newpath)//perform rename operation by moving file to same location
   
     console.log("rename", newpath)
 
-const data = new FormData();
-data.append('file', {
-  uri: `file://${str}`,
-  name: `${result}`,
-  type: 'video/mp4',
-});
-console.log("3rd",data)
+// const data = new FormData();
+// data.append('file', {
+//   uri: `file://${str}`,
+//   name: `${result}`,
+//   type: 'video/mp4',
+// });
+// console.log("3rd",data)
 
 })//end upload function
 
@@ -107,7 +109,7 @@ console.log("3rd",data)
 
   return (
     <>
-<KeyboardAvoidingView behavior="padding" style={styles.container}>
+<ScrollView automaticallyAdjustKeyboardInsets={true} style={styles.container}>
       <View style={styles.iconRow}>
         <View style={styles.rectStack}>
           <View style={styles.rect}></View>
@@ -126,18 +128,30 @@ console.log("3rd",data)
               </TouchableHighlight>
             </View>
             {vidPath ? (
+              <View style={styles.inputContainer} >
+              <Input 
+              placeholder="Enter a name for this file" 
+              value={rename} 
+              textAlign={'center'}
+              onChangeText={(text) => setRename(text)}
+              />
             <Button 
+            disabled={!rename}
             onPress={
-              upload
+              saveFile
+              //disableOnClick;
             }
-            containerStyle={styles.uploadbtn} title= "Upload"
-          />
+            containerStyle={styles.uploadbtn} title= "Save File"
+          /></View>
         
         ) : null}
+            {success ? (
+              <Text style={styles.successmsg}>Success</Text>
+              ) : null}
           </View>
         </View>
       </View>
-      </KeyboardAvoidingView>
+      </ScrollView>
     </>
   );
   
@@ -148,23 +162,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  inputContainer: {
+    width: 300,
+    paddingTop: 50,
+    textAlign: 'center',
+  },
   text: {
     fontSize: 20,
     lineHeight: 24,
     marginTop: 15,
     color: 'white'
-  },
-  text2: {
-    fontSize: 20,
-    lineHeight: 24,
-    marginTop: 15,
-    color: 'white'
-  },
-  texttest: {
-    fontSize: 20,
-    lineHeight: 24,
-    marginTop: 15,
-    color: 'black'
   },
   icon: {
     color: "rgba(128,128,128,1)",
@@ -176,6 +183,7 @@ const styles = StyleSheet.create({
     left: 300,
     width: 375,
     height: 741,
+    paddingBottom: 100,
     backgroundColor: "rgba(255,255,255,1)"
   },
   rect6: {
@@ -184,8 +192,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     backgroundColor: "rgba(88,88,89,1)",
     borderRadius: 20,
+    paddingBottom: 100,
     left: 56,
-    top: 280
+    top: 280,
   },
   button2: {
     width: 49,
@@ -241,6 +250,11 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginLeft: 104,
   },
+  successmsg: {
+    fontFamily: "roboto-700",
+    color: "black",
+    fontSize: 38,
+  },
   rectStack: {
     width: 475,
     height: 741,
@@ -252,7 +266,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: -122,
     marginLeft: -525,
-    marginTop: 8
+    marginTop: 8,
+    paddingBottom: 200,
   },
   uploadbtn: {
     width: 150,
@@ -260,7 +275,6 @@ const styles = StyleSheet.create({
     //alignItems: 'center',
     //justifyContent: 'center',
     left: 90,
-    marginTop: 100
   }
 
 });

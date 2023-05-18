@@ -50,8 +50,8 @@ export default function FileReader() {
     //console.log(fileList)
     return (
       <View>
-        <Text style={styles.name}>Name: {name}</Text>
-        <Text> {isFile ? "It is a file" : "It's a folder"}</Text>
+        <Text style={styles.name}>File: {name}</Text>
+        
       </View>
     );
   };
@@ -59,7 +59,7 @@ export default function FileReader() {
     console.log(fileList)
     return (
       <View>
-        <Text style={styles.title}>{index}</Text>
+        <Text style={styles.text}></Text>
         {/* The isFile method indicates whether the scanned content is a file or a folder*/}
         <Item name={item.name} isFile={item.isFile()} />
       </View>
@@ -69,7 +69,6 @@ export default function FileReader() {
 
   const upload = ((name) => {
        let str = name
-      //console.log(name + 'cocks')
       data.append('files', {
         uri: `file://${videoPath}${str}`,
         name: `${str}`,
@@ -109,7 +108,7 @@ const handleUpload = async () => {
             onPress={
               handleUpload
             }
-            containerStyle={styles.uploadbtn} title= "Upload"
+            containerStyle={styles.uploadbtn} title= "Upload Files"
           />
           <Text>{responseMessage}</Text>
     </SafeAreaView>
@@ -122,10 +121,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   text: {
-    fontSize: 20,
-    lineHeight: 24,
-    marginTop: 15,
-    color: 'white'
+    fontSize: 25,
+    lineHeight: 10,
+    color: 'black'
   },
   text2: {
     fontSize: 20,
@@ -230,9 +228,10 @@ const styles = StyleSheet.create({
   uploadbtn: {
     width: 150,
     height: 50,
+    marginTop: 30,
+    left: 130,
     //alignItems: 'center',
     //justifyContent: 'center',
-    left: 90,
-    marginTop: 100
+
   }
 });
