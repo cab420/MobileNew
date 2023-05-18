@@ -27,6 +27,7 @@ const LoginScreen = ({ navigation }) => {
       <Image source={require("../assets/badge.png")} style={styles.logo}/>
         <View style={styles.inputContainer}>
             <Input 
+              autoFocus={true}
               placeholder="Enter Email" 
               type="email" 
               value={email} 
