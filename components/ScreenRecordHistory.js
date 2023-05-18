@@ -32,6 +32,7 @@ export default function FileReader() {
   const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/"
   
   const [files, setFiles] = useState([])
+  const [show, setShow] = useState(false)
   //const [fileList, setFileList] = useState([])
   var fileList = [];
   const data = new FormData();
@@ -50,13 +51,14 @@ export default function FileReader() {
     //console.log(fileList)
     return (
       <View>
-        <Text style={styles.name}>File: {name}</Text>
+        <Text style={styles.name}>VIDEO:   {name}</Text>
         
       </View>
     );
   };
   const renderItem = ({ item, index }) => {
     console.log(fileList)
+    setShow(true);
     return (
       <View>
         <Text style={styles.text}></Text>
@@ -96,20 +98,35 @@ const handleUpload = async () => {
   }
 }
 
+const deleteAllFiles = async () => {
+  await RNFS.unlink(videoPath);
+  RNFS.mkdir(videoPath);
+}
+
 //upload();
   return (
     <SafeAreaView>
       <FlatList
         data={files}
         renderItem={renderItem}
-        keyExtractor={(item) => item.name}
+        keyEx
+        tractor={(item) => item.name}
       />
-      <Button 
-            onPress={
-              handleUpload
-            }
-            containerStyle={styles.uploadbtn} title= "Upload Files"
-          />
+      {show ? (
+        <View>
+              <Button 
+              onPress={
+                handleUpload
+              }
+              containerStyle={styles.uploadbtn} title= "Upload Files"
+            />
+             <Button 
+              onPress={
+                deleteAllFiles
+              }
+              containerStyle={styles.uploadbtn} title= "Delete All Files"
+            /></View>
+              ) : <Text style={styles.text}>NO FILES FOUND</Text>}
           <Text>{responseMessage}</Text>
     </SafeAreaView>
   );
@@ -120,16 +137,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  text: {
-    fontSize: 25,
-    lineHeight: 10,
+  name: {
+    fontSize: 15,
     color: 'black'
   },
-  text2: {
+  text: {
     fontSize: 20,
-    lineHeight: 24,
-    marginTop: 15,
-    color: 'white'
+    marginTop: 20,
+    color: 'black'
   },
   texttest: {
     fontSize: 20,
