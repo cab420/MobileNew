@@ -28,6 +28,8 @@ export default function FileReader() {
   const [f, setF] = useState('');
   const [response, setResponse] = useState({});
   const [responseMessage, setResponseMessage] = useState('')
+  const [videoInfo, setVideoInfo] = useState([])
+  const [videoList] = useState([])
  
   const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/"
   
@@ -57,7 +59,7 @@ export default function FileReader() {
     );
   };
   const renderItem = ({ item, index }) => {
-    console.log(fileList)
+    //console.log(fileList)
     setShow(true);
     return (
       <View>
@@ -67,7 +69,7 @@ export default function FileReader() {
       </View>
     );
   };
-  //console.log(fileList)
+  
 
   const upload = ((name) => {
        let str = name
@@ -76,12 +78,41 @@ export default function FileReader() {
         name: `${str}`,
         type: 'video/mp4',
       });
-    
-    console.log(data)
+      videoList.push(str)
+      
+  })
 
-})
+  //create list of info of all uploaded videos to be stored in db
+  const createVideoInfo = ((videoList) => {
+       function onlyUnique(value, index, array) {
+  return array.indexOf(value) === index;
+}
+    const day = new Date().getDate() 
+    var month = new Date().getMonth() + 1
+    const year = new Date().getFullYear()
+    if (month != 10 && month != 11 && month != 12) {
+      month = `0${month}`
+    }
+    const date = day + '-' + month + '-' + year
+    //create filtered list to remove duplicates
+    const uniqueList = videoList.filter(onlyUnique)
+    //clear list before each run to avoid duplicates
+    setVideoInfo([])
+    //itterate over list and add relavent info to videoInfo object
+    uniqueList.forEach(element => {
+      videoInfo.push({
+        name: userInfo.name,
+        team: userInfo.team,
+        filename: element,
+        date: date
+      })
+    });
+    
+    
+  })
 
 const handleUpload = async () => {
+  //post video files in form
   await axios.post(`${BASE_URL}/api/files/getfiles`, data, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -91,6 +122,14 @@ const handleUpload = async () => {
   .catch(err => {
     console.log(err)
   })
+  createVideoInfo(videoList);
+  //post video information to be stored in database
+  await axios.post(`${BASE_URL}/api/files/uploadfile`, videoInfo)
+  .catch(err => {
+    console.log(err)
+  })
+  
+  console.log(videoInfo)
   
   if (response.status == 200) {
     
