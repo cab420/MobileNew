@@ -101,7 +101,7 @@ const simpleAlert =() => {
 <ScrollView automaticallyAdjustKeyboardInsets={true} style={styles.container}>
       <View style={styles.iconRow}>
         <View style={styles.rectStack}>
-          <View style={styles.rect}></View>
+          
           <View style={styles.rect6}>
             <TouchableHighlight style={styles.button2}>
               <View style={styles.button3}>
