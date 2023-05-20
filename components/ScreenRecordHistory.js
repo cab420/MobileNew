@@ -101,7 +101,50 @@ const handleUpload = async () => {
 const deleteAllFiles = async () => {
   await RNFS.unlink(videoPath);
   RNFS.mkdir(videoPath);
-}
+} //not using at the moment, using the logic in the below confirm box
+
+const deleteConfirm = () => {
+  return Alert.alert(
+    "Are your sure?",
+    "Are you sure you want to delete all files?",
+    [
+      // The "Yes" button
+      {
+        text: "Yes",
+        onPress: async () => {
+          deleteAllFiles();
+        },
+      },
+      // The "No" button
+      // Does nothing but dismiss the dialog when tapped
+      {
+        text: "No",
+      },
+    ]
+  );
+};
+
+const uploadConfirm = () => {
+  return Alert.alert(
+    "Are your sure?",
+    "Are you sure you want to upload all files?",
+    [
+      // The "Yes" button
+      {
+        text: "Yes",
+        onPress: () => {
+          handleUpload();
+        },
+      },
+      // The "No" button
+      // Does nothing but dismiss the dialog when tapped
+      {
+        text: "No",
+      },
+    ]
+  );
+};
+
 
 //upload();
   return (
@@ -116,13 +159,13 @@ const deleteAllFiles = async () => {
         <View>
               <Button 
               onPress={
-                handleUpload
+                uploadConfirm
               }
               containerStyle={styles.uploadbtn} title= "Upload Files"
             />
              <Button 
               onPress={
-                deleteAllFiles
+                deleteConfirm
               }
               containerStyle={styles.uploadbtn} title= "Delete All Files"
             /></View>

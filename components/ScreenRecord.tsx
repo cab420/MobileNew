@@ -76,29 +76,13 @@ export default function ScreenRecord() {
     RNFS.moveFile(truepath, newpath)//perform rename operation by moving file to same location
   
     console.log("rename", newpath)
-
-// const data = new FormData();
-// data.append('file', {
-//   uri: `file://${str}`,
-//   name: `${result}`,
-//   type: 'video/mp4',
-// });
-// console.log("3rd",data)
-
-})//end upload function
-
-  // axios.post(`${BASE_URL}/api/files/getfiles`, data, {
-  //   headers: {
-  //     'Content-Type': 'multipart/form-data',
-  //   },
-  // }).then((response) => {
-  //   console.log(response);
-  // }).catch((error) => {
-  //   console.log(error);
-  // })
-
-  // })
+    setSuccess(true);
+})
   
+const simpleAlert =() => {
+  Alert.alert('File Saved');
+}
+
   const btnStyle = useMemo(() => {
     return recording ? styles.button4active : styles.button4;
   }, [recording]);
@@ -106,6 +90,11 @@ export default function ScreenRecord() {
   const textStyle = useMemo(() => {
     return recording ? styles.button4active : styles.button4;
   }, [recording]);
+
+  function handleClick () {
+    saveFile();
+    simpleAlert();
+   }
 
   return (
     <>
@@ -138,16 +127,15 @@ export default function ScreenRecord() {
             <Button 
             disabled={!rename}
             onPress={
-              saveFile
-              //disableOnClick;
+              handleClick
             }
             containerStyle={styles.uploadbtn} title= "Save File"
           /></View>
         
         ) : null}
-            {success ? (
-              <Text style={styles.successmsg}>Success</Text>
-              ) : null}
+            {/* {success ? (
+              <Text style={styles.successmsg}>File saved</Text>
+              ) : null} */}
           </View>
         </View>
       </View>
@@ -166,6 +154,7 @@ const styles = StyleSheet.create({
     width: 300,
     paddingTop: 50,
     textAlign: 'center',
+    left: 10
   },
   text: {
     fontSize: 20,
@@ -252,8 +241,10 @@ const styles = StyleSheet.create({
   },
   successmsg: {
     fontFamily: "roboto-700",
-    color: "black",
-    fontSize: 38,
+    color: "green",
+    fontSize: 18,
+    top: 100,
+    left: 130
   },
   rectStack: {
     width: 475,
