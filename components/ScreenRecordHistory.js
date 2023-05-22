@@ -7,6 +7,7 @@ import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import { Button, Input, Image } from "react-native-elements";
 import * as RNFS from 'react-native-fs';
+import { CreateDate } from './createDate';
 import {
   StyleSheet,
   View,
@@ -30,6 +31,7 @@ export default function FileReader() {
   const [responseMessage, setResponseMessage] = useState('')
   const [videoInfo, setVideoInfo] = useState([])
   const [videoList] = useState([])
+  const [videoLength, setVideoLength] = useState();
  
   const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/"
   
@@ -87,13 +89,7 @@ export default function FileReader() {
        function onlyUnique(value, index, array) {
   return array.indexOf(value) === index;
 }
-    const day = new Date().getDate() 
-    var month = new Date().getMonth() + 1
-    const year = new Date().getFullYear()
-    if (month != 10 && month != 11 && month != 12) {
-      month = `0${month}`
-    }
-    const date = day + '-' + month + '-' + year
+    
     //create filtered list to remove duplicates
     const uniqueList = videoList.filter(onlyUnique)
     //clear list before each run to avoid duplicates
@@ -104,7 +100,7 @@ export default function FileReader() {
         name: userInfo.name,
         team: userInfo.team,
         filename: element,
-        date: date
+        date: CreateDate()
       })
     });
     
@@ -123,16 +119,31 @@ const handleUpload = async () => {
     console.log(err)
   })
   createVideoInfo(videoList);
+  
   //post video information to be stored in database
   await axios.post(`${BASE_URL}/api/files/uploadfile`, videoInfo)
+  /*
+  .then(res => {
+
+    const auditLog = {
+      user: userInfo.name,
+      team: userInfo.team,
+      datetime: CreateDate(),
+      detail: `Recorded files were uploaded to the server from a mobile device.`
+    }
+    console.log(videoInfo)
+    if (!videoInfo === []) {
+      axios.post(`${BASE_URL}/api/audit/addlog`, auditLog)
+    }
+    
+  })
+  */
+  
   .catch(err => {
     console.log(err)
   })
-  
-  console.log(videoInfo)
-  
   if (response.status == 200) {
-    
+  
     setResponseMessage('Successfully uploaded files')
   }
 }
