@@ -1,7 +1,7 @@
 import RecordScreen, { RecordingResult } from 'react-native-record-screen'; //importing this for screen RECORDING not sharing
 import React, { useState, useMemo, useCallback, useContext, useEffect } from 'react';
 import {uploadFiles} from 'react-native-fs';
-import { BASE_URL } from '../config/config';
+import { API_URL } from '../config/config';
 import { AuthContext } from '../context/AuthContext';
 //import RNFS from 'react-native-fs';
 import axios from 'axios';
@@ -109,7 +109,7 @@ export default function FileReader() {
 
 const handleUpload = async () => {
   //post video files in form
-  await axios.post(`${BASE_URL}/api/files/getfiles`, data, {
+  await axios.post(`${API_URL}/api/files/getfiles`, data, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -121,7 +121,7 @@ const handleUpload = async () => {
   createVideoInfo(videoList);
   
   //post video information to be stored in database
-  await axios.post(`${BASE_URL}/api/files/uploadfile`, videoInfo)
+  await axios.post(`${API_URL}/api/files/uploadfile`, videoInfo)
   /*
   .then(res => {
 

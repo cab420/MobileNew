@@ -1,7 +1,7 @@
 import RecordScreen, { RecordingResult } from 'react-native-record-screen'; //importing this for screen RECORDING not sharing
 import React, { useState, useMemo, useCallback, useContext } from 'react';
 import * as RNFS from 'react-native-fs';
-import { BASE_URL } from '../config/config';
+import { API_URL } from '../config/config';
 import { AuthContext } from '../context/AuthContext';
 //import RNFS from 'react-native-fs';
 import axios from 'axios';

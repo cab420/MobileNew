@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {createContext, useEffect, useState} from 'react';
-import { BASE_URL } from '../config/config';
+import { API_URL } from '../config/config';
 //import Cookie from 'react-native-cookie'
 
 export const AuthContext = createContext();
@@ -18,7 +18,7 @@ export const AuthContextProvider = ({children}) => {
         setErr("")
         
         await axios
-            .post(`${BASE_URL}/api/auth/login`, {
+            .post(`${API_URL}/api/auth/login`, {
                 email,
                 password,
                 withCredentials: true,
@@ -42,7 +42,7 @@ export const AuthContextProvider = ({children}) => {
         userInfo = JSON.parse(userInfo);
         axios
             .post(
-                `${BASE_URL}/api/auth/mfa`,                
+                `${API_URL}/api/auth/mfa`,                
                 {
 
                     mfaToken: token,
@@ -71,7 +71,7 @@ export const AuthContextProvider = ({children}) => {
 
         axios
             .post(
-                `${BASE_URL}/api/auth/logout`,
+                `${API_URL}/api/auth/logout`,
                 {},
                 {
                     headers: {authorization: `Bearer ${userInfo.accessToken}`},
@@ -94,7 +94,7 @@ export const AuthContextProvider = ({children}) => {
                 let userInfo = await AsyncStorage.getItem('userInfo');
                 userInfo = JSON.parse(userInfo);
                 axios
-                .post(`${BASE_URL}/api/auth/isLoggedIn`,
+                .post(`${API_URL}/api/auth/isLoggedIn`,
                         {},
                         {
                             headers: {authorization: `Bearer ${userInfo.accessToken}`},
