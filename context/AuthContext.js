@@ -68,7 +68,7 @@ export const AuthContextProvider = ({children}) => {
     const logout = () => {
             
         setIsLoading(true);
-
+        console.log(`${API_URL}/api/auth/logout`)
         axios
             .post(
                 `${API_URL}/api/auth/logout`,
@@ -83,8 +83,11 @@ export const AuthContextProvider = ({children}) => {
                 setUserInfo({});
                 setIsLoading(false);
             })
-            .catch( e => {// error handling to be changed here
-                console.log(`logout error ${e}`);
+            .catch( function (error) {// error handling to be changed here
+                console.log(`logout error ${error}`);
+                //console.log(error.response.data);
+                //console.log(error.response.status);
+                //console.log(error.response.headers);
                 setIsLoading(false);
             });
     };
