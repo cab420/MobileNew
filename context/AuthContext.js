@@ -1,7 +1,8 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {createContext, useEffect, useState} from 'react';
-import setApiURL from '../config/config';
+import {setApiURL} from '../config/config';
+
 //import Cookie from 'react-native-cookie'
 
 export const AuthContext = createContext();
@@ -11,12 +12,15 @@ export const AuthContextProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [splashLoading, setSplashLoading] = useState(false);
     const [err, setErr] = useState(null);
+    const API_URL = setApiURL();
+    //console.log(API_URL + 'url')
+    
     
     
     const login = async (email, password) => {
-        const API_URL = setApiURL();
+        
         setIsLoading(true);
-        //setErr("")
+        setErr("")
         
         await axios
             .post(`${API_URL}/api/auth/login`, {

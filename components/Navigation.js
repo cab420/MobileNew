@@ -42,7 +42,7 @@ const Navigation = () => {
       </>
       ) : (
       <>
-        <Stack.Screen name="ServerScreen" component={ServerScreen} />
+        
 
           {userInfo.email ? (
             <Stack.Screen
@@ -52,12 +52,14 @@ const Navigation = () => {
             />
           
           ) : (
+            <>
             <Stack.Screen
             name="Login"
             component={LoginScreen}
             options={{headerShown: false}}
             />
-      
+            <Stack.Screen name="ServerScreen" component={ServerScreen} />
+            </>
           )}
         </>
       )}          

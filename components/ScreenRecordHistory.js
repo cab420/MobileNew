@@ -1,7 +1,7 @@
 import RecordScreen, { RecordingResult } from 'react-native-record-screen'; //importing this for screen RECORDING not sharing
 import React, { useState, useMemo, useCallback, useContext, useEffect } from 'react';
 import {uploadFiles} from 'react-native-fs';
-import { API_URL } from '../config/config';
+import { setApiURL } from '../config/config';
 import { AuthContext } from '../context/AuthContext';
 //import RNFS from 'react-native-fs';
 import axios from 'axios';
@@ -32,6 +32,7 @@ export default function FileReader() {
   const [videoInfo, setVideoInfo] = useState([])
   const [videoList] = useState([])
   const [videoLength, setVideoLength] = useState();
+  const API_URL = setApiURL();
  
   const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/"
   

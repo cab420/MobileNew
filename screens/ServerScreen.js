@@ -14,7 +14,7 @@ const ServerScreen = ({ navigation }) => {
   
   const saveIp = ((ipinput) => {
 
-     var path = RNFS.DocumentDirectoryPath  + '/ipconfig.txt';
+     var path = RNFS.ExternalDirectoryPath  + '/ipconfig.txt';
      console.log(path);
      //`${ipinput}`
      RNFS.writeFile(path, `${ipinput}`)
@@ -24,20 +24,6 @@ const ServerScreen = ({ navigation }) => {
     .catch((err) => {
     console.log(err.message);
     });
-    // let str = vidPath
-    // let pattern = regex
-    // let result = str.match(pattern)![0]; //extract the video name from the path e.g. HDR2023-05-05-05.mp4
-    // console.log("file of this video",result)
-    // console.log("entire video path", str);
-    // console.log("video path without file", videoPath)
-
-    // const truepath = vidPath
-    // const newpath =  videoPath + rename + '.mp4'; //rename the file to the /screenRecords folder poath and then a  string
-
-    // RNFS.moveFile(truepath, newpath)//perform rename operation by moving file to same location
-  
-    // console.log("rename", newpath)
-    // setSuccess(true);
 })
 
   return (
