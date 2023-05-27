@@ -14,7 +14,7 @@ const ServerScreen = ({ navigation }) => {
   
   const saveIp = ((ipinput) => {
 
-     var path = RNFS.ExternalDirectoryPath  + '/ipconfig.txt';
+     var path = RNFS.DocumentDirectoryPath  + '/ipconfig.txt';
      console.log(path);
      //`${ipinput}`
      RNFS.writeFile(path, `${ipinput}`)

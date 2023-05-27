@@ -1,6 +1,6 @@
 //Update the URL variable to match that of the local IP address of the server
 import * as RNFS from 'react-native-fs';
-var path = RNFS.ExternalDirectoryPath  + '/ipconfig.txt';
+var path = RNFS.DocumentDirectoryPath  + '/ipconfig.txt';
 import React, {createContext, useEffect, useState} from 'react';
 
 export function setApiURL() {
