@@ -41,8 +41,12 @@ const ServerScreen = ({ navigation }) => {
         autoFocus={true}
         onChangeText={(text) => setIp(text)}
       ></TextInput>
+      {file ? (
+      <>
+        <Text>{`IP has been set to ${file}`}</Text>
+      </>
+      ) : null}
       
-      <Text>{`Set IP to ${file}`}</Text>
 
       <Button onPress={() => {
               saveIp(ip);
