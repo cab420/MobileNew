@@ -3,8 +3,10 @@ import AuthScreen from "../screens/AuthScreen";
 import HomeScreen from "../screens/HomeScreen";
 import SplashScreen from "../screens/SplashScreen";
 import RecordHistoryScreen from "../screens/RecordHistory";
+import ScreenRecord from './ScreenRecord'
 //import StreamScreen from "../screens/StreamScreen";
 import ScreenShare from "./ScreenShare"
+import FileReader from "./ScreenRecordHistory"
 
 import React, {useContext} from "react";
 import { AuthContextProvider, AuthContext } from "../context/AuthContext";
@@ -24,7 +26,7 @@ const globalScreenOptions = {
 }
 
 // options={{headerShown: false}} // from under component of each screen
-
+//<Stack.Screen name="ScreenShare" component={ScreenShare} /> put this back into navigation stack screen when rewady
 const Navigation = () => {
     const { userInfo, splashLoading } = useContext(AuthContext);
     return (
@@ -33,8 +35,8 @@ const Navigation = () => {
       {userInfo.accessToken ? (
       <>
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="RecordHistory" component={RecordHistoryScreen} />
-        <Stack.Screen name="ScreenShare" component={ScreenShare} />
+        <Stack.Screen name="RecordHistory" component={FileReader} />
+        <Stack.Screen name="ScreenRecord" component={ScreenRecord} />
       </>
       ) : (
       <>
