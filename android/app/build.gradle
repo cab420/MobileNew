@@ -116,6 +116,7 @@ android {
             storePassword 'hazhqpsifb399'
             keyAlias 'hazh'
             keyPassword 'hazhqpsifb399'
+        }
     }
     buildTypes {
         debug {
