@@ -4,5 +4,13 @@ const URL = "http://192.168.10.159"
 const API_PORT = ":3002";
 const SOCKET_PORT = ":8000"
 
-export const API_URL = URL + API_PORT;
+//export const API_URL = URL + API_PORT;
 export const SOCKET_URL =  URL + SOCKET_PORT
+
+export function API() {
+    const http = "http://"
+    const API_PORT = ":3002";
+    const fsShite = ''
+    const API_URL = http+fsShite+API_PORT
+    return API_URL;
+}
