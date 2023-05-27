@@ -18,6 +18,7 @@ const AuthScreen = ({ navigation }) => {
       <Text style = {styles.msg}>Please enter the code sent to the Authenticator App</Text>
       <TextInput style={styles.input}
         value={token}
+        autoFocus={true}
         onChangeText={(text) => setToken(text)}
       ></TextInput>
       <Text>{err}</Text>

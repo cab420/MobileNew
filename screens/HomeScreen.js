@@ -3,10 +3,11 @@ import React, {useState, useContext} from 'react'
 import { Button, Input, Image } from "react-native-elements";    
 import { AuthContext } from '../context/AuthContext';
 import {ImageBackground} from 'react-native'; // for background image
+import ScreenRecord, {_handleOnRecording} from '../components/ScreenRecord'
+import FileReader from '../components/ScreenRecordHistory';
 
 const HomeScreen = ({ navigation }) => {
     const {isLoading, logout, userInfo} = useContext(AuthContext);
-    
     const localImage = require('../assets/greyscaleQPSlogo.png'); // for background image
     
     return (
@@ -18,10 +19,10 @@ const HomeScreen = ({ navigation }) => {
           <Text></Text>
         
           <Button 
-            onPress={() => { 
-              navigation.navigate("ScreenShare")             
+            onPress={() => {
+              navigation.navigate("ScreenRecord")
             }}
-            containerStyle={styles.button} title="Share to Desktop" 
+            containerStyle={styles.button} title="Record Session" 
           />
         
           <Text></Text>
@@ -40,6 +41,8 @@ const HomeScreen = ({ navigation }) => {
             }}
             containerStyle={styles.button} title="Logout" 
           />
+
+            <Text></Text>
 
           </ImageBackground>
 
