@@ -3,6 +3,7 @@ import AuthScreen from "../screens/AuthScreen";
 import HomeScreen from "../screens/HomeScreen";
 import SplashScreen from "../screens/SplashScreen";
 import RecordHistoryScreen from "../screens/RecordHistory";
+import ServerScreen from "../screens/ServerScreen";
 import ScreenRecord from './ScreenRecord'
 //import StreamScreen from "../screens/StreamScreen";
 import ScreenShare from "./ScreenShare"
@@ -37,9 +38,12 @@ const Navigation = () => {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="RecordHistory" component={FileReader} />
         <Stack.Screen name="ScreenRecord" component={ScreenRecord} />
+
       </>
       ) : (
       <>
+        <Stack.Screen name="ServerScreen" component={ServerScreen} />
+
           {userInfo.email ? (
             <Stack.Screen
             name="Authenticator"

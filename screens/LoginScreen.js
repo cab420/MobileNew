@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native'
 import React, { useContext, useState } from 'react'
 import { Button, Input, Image } from "react-native-elements";
 import { AuthContext } from '../context/AuthContext';
+import ServerScreen from './ServerScreen';
 
 
 //loginscreen backend here
@@ -50,7 +51,15 @@ const LoginScreen = ({ navigation }) => {
         }
       }
         containerStyle={styles.button2}
-        />        
+        />   
+        
+        <Button title="Set IP"
+            onPress={() => {
+              navigation.navigate("ServerScreen")
+        }
+      }
+        containerStyle={styles.button2}
+        />      
 
         <View style={{ height: 100 }}/> 
     </KeyboardAvoidingView>
