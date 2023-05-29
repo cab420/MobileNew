@@ -4,11 +4,13 @@ import { Button, Input, Image } from "react-native-elements";
 import {ImageBackground} from 'react-native'; // for background image    
 import { AuthContext } from '../context/AuthContext';
 
+//import Navigation from '../components/Navigation';
+
 const AuthScreen = ({ navigation }) => {
   
   const localImage = require('../assets/greyscaleQPSlogo.png'); // for background image
 
-  const {isLoading, mfaVerify, err} = useContext(AuthContext);  
+  const {isLoading, mfaVerify, err, logout} = useContext(AuthContext);  
   const [token, setToken] = useState(null);
   
   return (
@@ -26,11 +28,20 @@ const AuthScreen = ({ navigation }) => {
               mfaVerify(token);
               if (!isLoading) {
                 if(err === null) {
-                  navigation.navigate("Authenticator")
+                  //navigation.navigate("Authenticator")
                 }
               }
             }}
+            
             containerStyle={styles.button} title="Continue" />
+            <Text></Text>
+            <Button 
+            onPress={() => {
+              logout()
+            }}
+            containerStyle={styles.button} title= "Return to login" 
+          />
+            
 
       </ImageBackground>
     </KeyboardAvoidingView>

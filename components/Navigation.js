@@ -45,12 +45,13 @@ const Navigation = () => {
         
 
           {userInfo.email ? (
+            <>
             <Stack.Screen
             name="Authenticator"
             component={AuthScreen}
             options={{headerShown: false}}
             />
-          
+          </>
           ) : (
             <>
             <Stack.Screen
