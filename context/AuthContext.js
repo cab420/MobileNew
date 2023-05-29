@@ -36,7 +36,7 @@ export const AuthContextProvider = ({children}) => {
                 setErr(null);
                 setIsLoading(false);                
             }).catch(e => {// error handling to be changed here
-                setErr(`login error ${e}`);
+                setErr(`login error ${e} using ${API_URL}`);
                 console.log(`login error ${e}`);                               
                 setIsLoading(false);
         });  

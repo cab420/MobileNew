@@ -11,11 +11,14 @@ const ServerScreen = ({ navigation }) => {
 
   const {isLoading, mfaVerify, err} = useContext(AuthContext);  
   const [ip, setIp] = useState(null);
-  
+  const [file, setFile] = useState('')
   const saveIp = ((ipinput) => {
-
-     var path = RNFS.DocumentDirectoryPath  + '/ipconfig.txt';
+    //var path3 = RNFS.ExternalDirectoryPath  + '/ipconfig.txt';
+    //var path2 = RNFS.ExternalStorageDirectoryPath  + '/ipconfig.txt';
+     var path = RNFS.ExternalDirectoryPath  + '/ipconfig.txt';
      console.log(path);
+     //console.log(path2);
+     //console.log(path3);
      //`${ipinput}`
      RNFS.writeFile(path, `${ipinput}`)
     .then((success) => {
@@ -24,6 +27,7 @@ const ServerScreen = ({ navigation }) => {
     .catch((err) => {
     console.log(err.message);
     });
+   RNFS.readFile(path).then(result => setFile(result));
 })
 
   return (
@@ -31,12 +35,18 @@ const ServerScreen = ({ navigation }) => {
       <ImageBackground source={localImage} style={styles.image}>
 
       <Text style = {styles.msg}>Please enter the servers IP address</Text>
+      <Text style = {styles.msg}>Example: 192.168.1.1</Text>
       <TextInput style={styles.input}
         value={ip}
         autoFocus={true}
         onChangeText={(text) => setIp(text)}
       ></TextInput>
-      <Text>{err}</Text>
+      {file ? (
+      <>
+        <Text>{`IP has been set to ${file}`}</Text>
+      </>
+      ) : null}
+      
 
       <Button onPress={() => {
               saveIp(ip);
