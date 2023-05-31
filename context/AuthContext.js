@@ -3,8 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {createContext, useEffect, useState} from 'react';
 import {setApiURL} from '../config/config';
 
-//import Cookie from 'react-native-cookie'
-
 export const AuthContext = createContext();
 
 export const AuthContextProvider = ({children}) => {
@@ -13,8 +11,7 @@ export const AuthContextProvider = ({children}) => {
     const [splashLoading, setSplashLoading] = useState(false);
     const [err, setErr] = useState(null);
     const API_URL = setApiURL();
-    //console.log(API_URL + 'url')
-    
+     
     
     
     const login = async (email, password) => {
@@ -111,9 +108,7 @@ export const AuthContextProvider = ({children}) => {
             } catch (e) {
             console.log(e);
         };
-        
-        
-        //.then(console.log('happened'))
+
         try {
             setSplashLoading(true);
 

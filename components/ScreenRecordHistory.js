@@ -22,7 +22,6 @@ import {
   FlatList
 } from 'react-native';
 
-// currently trying to print file path to URL and and set the default filepath to documents or photos or whatever
 
 export default function FileReader() {
   const {isLoading, logout, userInfo} = useContext(AuthContext);

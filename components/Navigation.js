@@ -18,8 +18,6 @@ import { StyleSheet, Text, View } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
-//const BASE_URL = "192.168.1.101:3002";
-
 const globalScreenOptions = {
   headerStyle: {backgroundColor: "#2C6BED"},
   headerTitleStyle: {color: "white"},

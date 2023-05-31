@@ -19,7 +19,6 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
-// currently trying to print file path to URL and and set the default filepath to documents or photos or whatever
 
 export default function ScreenRecord() {
   const {isLoading, logout, userInfo} = useContext(AuthContext);
@@ -32,7 +31,6 @@ export default function ScreenRecord() {
   const API_URL = setApiURL();
   const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/"
   let regex = new RegExp(/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
-  //let regex2 = new RegExp(/\/storage\/emulated\/0\/Android\/data\/com\.mobilenew\/files\/ReactNativeRecordScreen\/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
 
   const _handleOnRecording = async () => {
     if (recording) {
@@ -60,9 +58,6 @@ export default function ScreenRecord() {
       }
     }
   };
-
-  //const disableOnClick = event => event.currentTarget.disabled = true
-
   const saveFile = (() => {
     let str = vidPath
     let pattern = regex
