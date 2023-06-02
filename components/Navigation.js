@@ -26,6 +26,13 @@ const globalScreenOptions = {
 
 // options={{headerShown: false}} // from under component of each screen
 //<Stack.Screen name="ScreenShare" component={ScreenShare} /> put this back into navigation stack screen when rewady
+
+
+//navigation function
+//only renders the home, recordhistory and screenrecord screens if the user has logged in(has an accesstoken)
+//otherwise, it will render the login screen if there is no email input
+//when email input is gathered it will render the authenticator screen
+//serverscreen rendered as normal
 const Navigation = () => {
     const { userInfo, splashLoading } = useContext(AuthContext);
     return (
@@ -79,9 +86,3 @@ const styles = StyleSheet.create({
 });
 
 export default Navigation;
-
-
-
-//<Stack.Screen name="Login" component = {LoginScreen} />
-//<Stack.Screen name="Authenticator" component = {AuthScreen} />
-//<Stack.Screen name="Home" component = {HomeScreen} />

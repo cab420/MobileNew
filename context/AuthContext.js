@@ -13,7 +13,7 @@ export const AuthContextProvider = ({children}) => {
     const API_URL = setApiURL();
      
     
-    
+    //logs in user, sends user details to defined API route, stores user info in local storage ("userInfo")
     const login = async (email, password) => {
         
         setIsLoading(true);
@@ -27,7 +27,6 @@ export const AuthContextProvider = ({children}) => {
             })
             .then(res => {                
                 let userInfo = res.data;
-                //setErr(null);
                 setUserInfo(userInfo);
                 AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
                 setErr(null);
@@ -39,6 +38,7 @@ export const AuthContextProvider = ({children}) => {
         });  
     };
 
+    //mfaVerify function, gets userinfo and sends it via defined API route with the mfa token as parameter
     const mfaVerify = async (token) => {
         let userInfo = await AsyncStorage.getItem('userInfo');
         userInfo = JSON.parse(userInfo);
@@ -57,8 +57,6 @@ export const AuthContextProvider = ({children}) => {
                 setUserInfo(userInfo);
                 AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
                 setIsLoading(false);
-                //console.log(res);
-                //console.log(userInfo.accessToken);
             }).catch(e => {// error handling to be changed here
                 console.log(`login error ${e}`);
                 console.log(e)
@@ -67,6 +65,7 @@ export const AuthContextProvider = ({children}) => {
         }); 
     };
 
+    //logs uuser out, uses currently logged in users access token as verification
     const logout = () => {
             
         setIsLoading(true);
@@ -80,7 +79,6 @@ export const AuthContextProvider = ({children}) => {
                 },
             )
             .then(res => {
-                //console.log(res);
                 AsyncStorage.removeItem('userInfo');
                 setUserInfo({});
                 setIsLoading(false);
@@ -91,6 +89,7 @@ export const AuthContextProvider = ({children}) => {
             });
     };
     
+    //keep track of logged in user
     const isLoggedIn = async () => {
         try {
                 let userInfo = await AsyncStorage.getItem('userInfo');

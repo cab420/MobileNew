@@ -5,7 +5,7 @@ import {ImageBackground} from 'react-native'; // for background image
 import TextInputContainer from '../components/TextInputContainer';
 import ScreenShare from '../components/ScreenShare';
 
-
+//not in use at the moment//
 const StreamScreen = ({ navigation }) => {
   
   const localImage = require('../assets/greyscaleQPSlogo.png'); // for background image
@@ -61,21 +61,13 @@ const styles = StyleSheet.create({
     //width: 300,
     marginBottom: 20,
   },
-  //input: {
-    //height: 40,
-    //margin: 12,
-    //borderWidth: 1,
-    //padding: 10,
-  //},
   msg: {
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    //height: 100,
   },
 
   image: { // the background image
-    //flex: 1,
     justifyContent: 'center',
     resizeMode: 'contain',
     height: 300,

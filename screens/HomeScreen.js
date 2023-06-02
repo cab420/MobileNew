@@ -36,8 +36,7 @@ const HomeScreen = ({ navigation }) => {
           <Text></Text>
           <Button 
             onPress={() => {
-              logout();
-              //navigation.navigate("Login")
+              logout();//will be navigated to login screen due to no accesstoken
             }}
             containerStyle={styles.button} title="Logout" 
           />

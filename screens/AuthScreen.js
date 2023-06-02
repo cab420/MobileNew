@@ -28,7 +28,6 @@ const AuthScreen = ({ navigation }) => {
               mfaVerify(token);
               if (!isLoading) {
                 if(err === null) {
-                  //navigation.navigate("Authenticator")
                 }
               }
             }}

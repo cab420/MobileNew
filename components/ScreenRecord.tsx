@@ -19,7 +19,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
-
+//screen record function
 export default function ScreenRecord() {
   const {isLoading, logout, userInfo} = useContext(AuthContext);
   const [f, setF] = useState('');
@@ -29,8 +29,9 @@ export default function ScreenRecord() {
   const [url, setUrl] = useState<string>('');
   const [rename, setRename] = useState<string>('');
   const API_URL = setApiURL();
-  const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/"
-  let regex = new RegExp(/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i)
+  const videoPath = "/storage/emulated/0/Android/data/com.mobilenew/files/ReactNativeRecordScreen/" //vid path where the video files are saved
+  let regex = new RegExp(/([A-Za-z0-9]+(-[A-Za-z0-9]+)+)\.mp4/i) //regex to grab vid file e.g. HDR-2023-05-21-17-22.mp4
+
 
   const _handleOnRecording = async () => {
     if (recording) {
@@ -58,6 +59,7 @@ export default function ScreenRecord() {
       }
     }
   };
+  //save the recorded file on the phone locally
   const saveFile = (() => {
     let str = vidPath
     let pattern = regex
@@ -74,7 +76,8 @@ export default function ScreenRecord() {
     console.log("rename", newpath)
     setSuccess(true);
 })
-  
+
+//popup to confirm recording has been saved
 const simpleAlert =() => {
   Alert.alert('File Saved');
 }
@@ -87,6 +90,7 @@ const simpleAlert =() => {
     return recording ? styles.button4active : styles.button4;
   }, [recording]);
 
+  //execute both functions
   function handleClick () {
     saveFile();
     simpleAlert();

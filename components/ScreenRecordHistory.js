@@ -22,7 +22,7 @@ import {
   FlatList
 } from 'react-native';
 
-
+//begin filereader function
 export default function FileReader() {
   const {isLoading, logout, userInfo} = useContext(AuthContext);
   const [f, setF] = useState('');
@@ -37,7 +37,6 @@ export default function FileReader() {
   
   const [files, setFiles] = useState([])
   const [show, setShow] = useState(false)
-  //const [fileList, setFileList] = useState([])
   var fileList = [];
   const data = new FormData();
   const getFileContent = async (path) => {
@@ -52,7 +51,6 @@ export default function FileReader() {
     //setFileList(previous => [...previous, name])
     fileList.push(name)
     upload(name);
-    //console.log(fileList)
     return (
       <View>
         <Text style={styles.name}>VIDEO:   {name}</Text>
@@ -61,7 +59,6 @@ export default function FileReader() {
     );
   };
   const renderItem = ({ item, index }) => {
-    //console.log(fileList)
     setShow(true);
     return (
       <View>
@@ -122,22 +119,6 @@ const handleUpload = async () => {
   
   //post video information to be stored in database
   await axios.post(`${API_URL}/api/files/uploadfile`, videoInfo)
-  /*
-  .then(res => {
-
-    const auditLog = {
-      user: userInfo.name,
-      team: userInfo.team,
-      datetime: CreateDate(),
-      detail: `Recorded files were uploaded to the server from a mobile device.`
-    }
-    console.log(videoInfo)
-    if (!videoInfo === []) {
-      axios.post(`${BASE_URL}/api/audit/addlog`, auditLog)
-    }
-    
-  })
-  */
   
   .catch(err => {
     console.log(err)
@@ -147,6 +128,7 @@ const handleUpload = async () => {
     setResponseMessage('Successfully uploaded files')
   }
 }
+
 
 const deleteAllFiles = async () => {
   await RNFS.unlink(videoPath);
@@ -158,15 +140,14 @@ const deleteConfirm = () => {
     "Are your sure?",
     "Are you sure you want to delete all files?",
     [
-      // The "Yes" button
+      //yes
       {
         text: "Yes",
         onPress: async () => {
           deleteAllFiles();
         },
       },
-      // The "No" button
-      // Does nothing but dismiss the dialog when tapped
+        //no
       {
         text: "No",
       },
@@ -174,20 +155,20 @@ const deleteConfirm = () => {
   );
 };
 
+//uplaod confirm alert
 const uploadConfirm = () => {
   return Alert.alert(
     "Are your sure?",
     "Are you sure you want to upload all files?",
     [
-      // The "Yes" button
+      //yes
       {
         text: "Yes",
         onPress: () => {
           handleUpload();
         },
       },
-      // The "No" button
-      // Does nothing but dismiss the dialog when tapped
+      //no
       {
         text: "No",
       },
@@ -224,6 +205,7 @@ const uploadConfirm = () => {
     </SafeAreaView>
   );
   }
+  //end filereader function
   
 const styles = StyleSheet.create({
 

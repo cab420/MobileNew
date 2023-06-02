@@ -12,14 +12,13 @@ const ServerScreen = ({ navigation }) => {
   const {isLoading, mfaVerify, err} = useContext(AuthContext);  
   const [ip, setIp] = useState(null);
   const [file, setFile] = useState('')
+
+  //grabs a file path and creates an ipconfig.txt file
+  //writes to this file = the input of the user from the input box
+  //the file is used in the config.js file to grab the IP of the server (network) that the user wishes to connect to
   const saveIp = ((ipinput) => {
-    //var path3 = RNFS.ExternalDirectoryPath  + '/ipconfig.txt';
-    //var path2 = RNFS.ExternalStorageDirectoryPath  + '/ipconfig.txt';
      var path = RNFS.ExternalDirectoryPath  + '/ipconfig.txt';
      console.log(path);
-     //console.log(path2);
-     //console.log(path3);
-     //`${ipinput}`
      RNFS.writeFile(path, `${ipinput}`)
     .then((success) => {
     console.log('FILE WRITTEN!');
